@@ -420,7 +420,7 @@ Analyzes the shift of ketone peak frequency across depths.
 4. Generate data table with all values
 
 **Significance:**
-- Frequency shifts indicate changes in local chemical environment
+- Frequency shifts mainly indicate ketones position along polyethylene chains, being lower frequencies when more internal they are, and higher frequencies when nearer to the chain extreme they are
 - Hydrogen bonding typically causes red shift (lower frequency)
 - Can indicate interaction with adsorbed species
 

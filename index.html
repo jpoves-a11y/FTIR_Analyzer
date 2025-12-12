@@ -6,9 +6,11 @@
     <title>FTIR UHMWPE Analyzer</title>
     
     <!-- Favicon and PWA Manifest for desktop app icon -->
-    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+    <link rel="shortcut icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
-    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+    <link rel="manifest" href="manifest.json" crossorigin="use-credentials">
     <meta name="theme-color" content="#667eea">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -88,8 +90,8 @@
 
         .container-fluid {
             padding: 1.5rem 2rem;
-            width: 90vw;
-            max-width: 90vw;
+            width: 90%;
+            max-width: 1800px;
             margin: 0 auto;
         }
 
@@ -11573,12 +11575,64 @@
             URL.revokeObjectURL(url);
         }
 
+        // Global function to resize all Plotly charts
+        function resizeAllPlotlyCharts() {
+            const plotContainers = document.querySelectorAll('.plot-container > div, [id*="Plot"], [id*="plot"]');
+            plotContainers.forEach(container => {
+                if (container && container.data) {
+                    try {
+                        Plotly.Plots.resize(container);
+                    } catch (e) {
+                        // Silently ignore if not a valid Plotly container
+                    }
+                }
+            });
+        }
+        
+        // Setup ResizeObserver for plot containers
+        function setupPlotResizeObserver() {
+            if (typeof ResizeObserver !== 'undefined') {
+                const resizeObserver = new ResizeObserver(entries => {
+                    entries.forEach(entry => {
+                        const plotElement = entry.target.querySelector('[class*="plotly"], .js-plotly-plot');
+                        if (plotElement && plotElement.data) {
+                            try {
+                                Plotly.Plots.resize(plotElement);
+                            } catch (e) {}
+                        }
+                    });
+                });
+                
+                document.querySelectorAll('.plot-container').forEach(container => {
+                    resizeObserver.observe(container);
+                });
+            }
+        }
+
         // Event Listeners Setup
         document.addEventListener('DOMContentLoaded', function() {
             console.log('FTIR UHMWPE Deep Analyzer initialized');
+            console.log('Initializing file handlers...');
             
             // Initialize file handlers
             initializeFileHandlers();
+            
+            // Setup resize observer for plot containers
+            setupPlotResizeObserver();
+            
+            // Force resize of all Plotly charts after layout stabilizes
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    resizeAllPlotlyCharts();
+                }, 100);
+            });
+            
+            // Also resize on window resize with debounce
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(resizeAllPlotlyCharts, 150);
+            });
             
             // Initialize Bootstrap tooltips
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));

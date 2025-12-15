@@ -10030,28 +10030,28 @@
                 const discrepancyIcon = Math.abs(percentDiscrepancy) <= 10 ? 'fa-check-circle' : (Math.abs(percentDiscrepancy) <= 25 ? 'fa-exclamation-triangle' : 'fa-times-circle');
                 
                 discrepancyHtml = `
-                    <div class="col-md-4">
-                        <div class="text-center p-4 rounded-3 h-100" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px);">
-                            <div class="small text-white opacity-75 mb-2">
+                    <div class="col-4">
+                        <div class="text-center p-3 rounded-3 h-100" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px);">
+                            <div class="small text-white opacity-75 mb-1">
                                 <i class="fas fa-industry me-1"></i>Manufacturer Dose
                             </div>
-                            <div style="font-size: 1.8rem; font-weight: 700; color: #fff;">
-                                ${manufacturerDose.toFixed(2)} <span style="font-size: 1rem;">kGy</span>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #fff;">
+                                ${manufacturerDose.toFixed(2)} <span style="font-size: 0.9rem;">kGy</span>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="text-center p-4 rounded-3 h-100" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border: 2px solid ${discrepancyColor};">
-                            <div class="small text-white opacity-75 mb-2">
+                    <div class="col-4">
+                        <div class="text-center p-3 rounded-3 h-100" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border: 2px solid ${discrepancyColor};">
+                            <div class="small text-white opacity-75 mb-1">
                                 <i class="fas ${discrepancyIcon} me-1" style="color: ${discrepancyColor};"></i>Discrepancy
                             </div>
-                            <div style="font-size: 1.8rem; font-weight: 800; color: ${discrepancyColor};">
+                            <div style="font-size: 1.5rem; font-weight: 800; color: ${discrepancyColor};">
                                 ${isHigher ? '+' : ''}${absoluteDiscrepancy.toFixed(2)} kGy
                             </div>
-                            <div style="font-size: 1.2rem; font-weight: 600; color: ${discrepancyColor};">
+                            <div style="font-size: 1rem; font-weight: 600; color: ${discrepancyColor};">
                                 (${isHigher ? '+' : ''}${percentDiscrepancy.toFixed(1)}%)
                             </div>
-                            <div class="small text-white opacity-75 mt-2">
+                            <div class="small text-white opacity-75 mt-1">
                                 ${Math.abs(percentDiscrepancy) <= 10 ? 'Good agreement' : (Math.abs(percentDiscrepancy) <= 25 ? 'Moderate difference' : 'Significant difference')}
                             </div>
                         </div>
@@ -10060,34 +10060,40 @@
             }
             
             doseElement.innerHTML = `
-                <div class="row align-items-stretch g-3">
-                    <div class="${hasManufacturerDose ? 'col-md-4' : 'col-md-6'}">
-                        <div class="text-center p-4 rounded-3 h-100" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px);">
-                            <div class="small text-white opacity-75 mb-2">
+                <div class="row align-items-stretch g-2 px-2">
+                    <div class="${hasManufacturerDose ? 'col-4' : 'col-md-6'}">
+                        <div class="text-center p-3 rounded-3 h-100" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px);">
+                            <div class="small text-white opacity-75 mb-1">
                                 <i class="fas fa-radiation me-1"></i>Estimated from TVI
                             </div>
-                            <div style="font-size: ${hasManufacturerDose ? '1.8rem' : '3rem'}; font-weight: 800; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.2);">
-                                ${irradiationDose.toFixed(2)} <span style="font-size: ${hasManufacturerDose ? '1rem' : '1.5rem'};">kGy</span>
+                            <div style="font-size: ${hasManufacturerDose ? '1.5rem' : '2.5rem'}; font-weight: 800; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+                                ${irradiationDose.toFixed(2)} <span style="font-size: ${hasManufacturerDose ? '0.9rem' : '1.2rem'};">kGy</span>
                             </div>
                         </div>
                     </div>
                     ${discrepancyHtml}
-                    <div class="${hasManufacturerDose ? 'col-12' : 'col-md-6'}">
-                        <div class="text-white ${hasManufacturerDose ? 'row g-3' : ''}">
-                            <div class="${hasManufacturerDose ? 'col-md-4' : 'mb-3'}">
-                                <div class="small opacity-75"><i class="fas fa-wave-square me-1"></i>Mean TVI Used:</div>
-                                <div class="h5 mb-0">${meanTvi.toFixed(4)}</div>
+                    <div class="col-12 mt-3">
+                        <div class="text-white row g-2">
+                            <div class="col-4">
+                                <div class="p-2 rounded" style="background: rgba(255,255,255,0.1);">
+                                    <div class="small opacity-75"><i class="fas fa-wave-square me-1"></i>Mean TVI:</div>
+                                    <div class="fw-bold">${meanTvi.toFixed(4)}</div>
+                                </div>
                             </div>
-                            <div class="${hasManufacturerDose ? 'col-md-4' : 'mb-3'}">
-                                <div class="small opacity-75"><i class="fas fa-calculator me-1"></i>Formula:</div>
-                                <div class="small" style="font-family: monospace;">Dose = 4196.8 × TVI - 12.331</div>
+                            <div class="col-4">
+                                <div class="p-2 rounded" style="background: rgba(255,255,255,0.1);">
+                                    <div class="small opacity-75"><i class="fas fa-calculator me-1"></i>Formula:</div>
+                                    <div class="small" style="font-family: monospace;">Dose of irradiation (kGy) = 4196.8 × TVI - 12.331</div>
+                                </div>
                             </div>
-                            <div class="${hasManufacturerDose ? 'col-md-4' : 'mt-3'} p-2 rounded" style="background: rgba(255,255,255,0.1);">
-                                <div class="small">
-                                    <i class="fas fa-book me-1"></i><strong>Reference:</strong><br>
-                                    <a href="https://doi.org/10.1302/2046-3758.1311.BJR-2024-0203.R1" target="_blank" class="text-white" style="text-decoration: underline;">
-                                        DOI: 10.1302/2046-3758.1311.BJR-2024-0203.R1
-                                    </a>
+                            <div class="col-4">
+                                <div class="p-2 rounded" style="background: rgba(255,255,255,0.1);">
+                                    <div class="small">
+                                        <i class="fas fa-book me-1"></i><strong>Reference:</strong><br>
+                                        <a href="https://doi.org/10.1302/2046-3758.1311.BJR-2024-0203.R1" target="_blank" class="text-white small" style="text-decoration: underline; word-break: break-all;">
+                                            DOI: 10.1302/2046-3758.1311.BJR-2024-0203.R1
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>

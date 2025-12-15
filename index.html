@@ -2501,14 +2501,15 @@
                                         <div id="depthProfilePlot" class="plot-container"></div>
                                         <div class="mt-3 p-3 rounded" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border: 1px solid #90caf9;">
                                             <div>
-                                                <strong style="color: #1565c0;"><i class="fas fa-info-circle me-2"></i>Critical Oxidation Threshold Reference</strong>
+                                                <strong style="color: #1565c0;"><i class="fas fa-info-circle me-2"></i>Oxidation Index Classification Reference</strong>
                                                 <p class="mb-1 small mt-2" style="color: #37474f;">
-                                                    Several studies establish that OI values ≤ 0.1 are considered low, OI ≤ 1 acceptable, and OI > 3 critical, 
-                                                    indicating severe oxidative damage. An OI value of 1 is commonly used as a threshold above which the risk 
-                                                    of functional degradation and implant failure significantly increases.
+                                                    Based on in vivo oxidation studies of UHMWPE: OI values from 0 to 1 indicate <strong>low oxidation</strong>, 
+                                                    OI values from 1 to 3 represent <strong>moderate oxidation</strong> (yellow zone), and OI values > 3 indicate 
+                                                    <strong>critical oxidation</strong> (orange zone), suggesting severe oxidative degradation with increased 
+                                                    risk of implant failure.
                                                 </p>
-                                                <a href="https://doi.org/10.1186/1471-2474-15-109" target="_blank" class="small" style="color: #1976d2;">
-                                                    <i class="fas fa-external-link-alt me-1"></i>DOI: 10.1186/1471-2474-15-109 - Quantification of structural changes of UHMWPE components in total joint replacements
+                                                <a href="https://doi.org/10.1016/C2013-0-16083-7" target="_blank" class="small" style="color: #1976d2;">
+                                                    <i class="fas fa-external-link-alt me-1"></i>Kurtz SM & Oral E. (2016) — Chapter 27: "In Vivo Oxidation of UHMWPE" - UHMWPE Biomaterials Handbook
                                                 </a>
                                             </div>
                                         </div>
@@ -10233,6 +10234,7 @@
                 plot_bgcolor: 'white',
                 paper_bgcolor: 'white',
                 shapes: [
+                    // Moderate oxidation zone (1 to 3) - Yellow
                     {
                         type: 'rect',
                         xref: 'paper',
@@ -10240,13 +10242,29 @@
                         x0: 0,
                         x1: 1,
                         y0: 1,
-                        y1: yMax + 10,
+                        y1: 3,
                         fillcolor: 'rgba(255, 215, 0, 0.3)',
                         line: {
                             width: 0
                         },
                         layer: 'below'
                     },
+                    // Critical oxidation zone (3 and above) - Orange
+                    {
+                        type: 'rect',
+                        xref: 'paper',
+                        yref: 'y',
+                        x0: 0,
+                        x1: 1,
+                        y0: 3,
+                        y1: yMax + 10,
+                        fillcolor: 'rgba(255, 140, 0, 0.35)',
+                        line: {
+                            width: 0
+                        },
+                        layer: 'below'
+                    },
+                    // Line at OI = 1 (Low to Moderate threshold)
                     {
                         type: 'line',
                         xref: 'paper',
@@ -10257,7 +10275,22 @@
                         y1: 1,
                         line: {
                             color: '#FFD700',
-                            width: 3,
+                            width: 2,
+                            dash: 'solid'
+                        }
+                    },
+                    // Line at OI = 3 (Moderate to Critical threshold)
+                    {
+                        type: 'line',
+                        xref: 'paper',
+                        yref: 'y',
+                        x0: 0,
+                        x1: 1,
+                        y0: 3,
+                        y1: 3,
+                        line: {
+                            color: '#FF8C00',
+                            width: 2,
                             dash: 'solid'
                         }
                     }
@@ -10267,17 +10300,49 @@
                         xref: 'paper',
                         yref: 'y',
                         x: 0.02,
-                        y: 1.02,
+                        y: 0.5,
                         xanchor: 'left',
-                        yanchor: 'bottom',
-                        text: '<b>Critical Oxidation Threshold</b>',
+                        yanchor: 'middle',
+                        text: '<b>Low Oxidation</b>',
                         showarrow: false,
                         font: {
-                            size: 11,
+                            size: 10,
+                            color: '#2e7d32'
+                        },
+                        bgcolor: 'rgba(255, 255, 255, 0.8)',
+                        borderpad: 2
+                    },
+                    {
+                        xref: 'paper',
+                        yref: 'y',
+                        x: 0.02,
+                        y: 2,
+                        xanchor: 'left',
+                        yanchor: 'middle',
+                        text: '<b>Moderate Oxidation</b>',
+                        showarrow: false,
+                        font: {
+                            size: 10,
                             color: '#B8860B'
                         },
-                        bgcolor: 'rgba(255, 255, 255, 0.9)',
-                        borderpad: 3
+                        bgcolor: 'rgba(255, 255, 255, 0.8)',
+                        borderpad: 2
+                    },
+                    {
+                        xref: 'paper',
+                        yref: 'y',
+                        x: 0.02,
+                        y: 3.5,
+                        xanchor: 'left',
+                        yanchor: 'middle',
+                        text: '<b>Critical Oxidation</b>',
+                        showarrow: false,
+                        font: {
+                            size: 10,
+                            color: '#D84315'
+                        },
+                        bgcolor: 'rgba(255, 255, 255, 0.8)',
+                        borderpad: 2
                     }
                 ]
             };

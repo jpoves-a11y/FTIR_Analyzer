@@ -10056,6 +10056,38 @@
                             </div>
                         </div>
                     `;
+                    
+                    // Add irradiation dose card after TVI
+                    if (config.type === 'tvi') {
+                        const irradiationDose = 4196.8 * mean - 12.331;
+                        html += `
+                            <div class="mb-3 p-3 rounded-3" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b;">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="me-3 p-2 rounded-circle" style="background: #f59e0b; color: white;">
+                                        <i class="fas fa-radiation"></i>
+                                    </div>
+                                    <h6 class="mb-0" style="color: #b45309; font-weight: 700;">Estimated Irradiation Dose</h6>
+                                </div>
+                                <div class="row g-2">
+                                    <div class="col-12">
+                                        <div class="text-center p-3 rounded-2 bg-white" style="box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                            <div style="font-size: 2rem; font-weight: 700; color: #b45309;">${irradiationDose.toFixed(2)} kGy</div>
+                                            <div class="small text-muted mt-1">
+                                                <i class="fas fa-calculator me-1"></i>Calculated from mean TVI using: Dose (kGy) = 4196.8 × TVI - 12.331
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-2 small" style="color: #92400e;">
+                                    <i class="fas fa-book me-1"></i>Reference: 
+                                    <a href="https://doi.org/10.1302/2046-3758.1311.BJR-2024-0203.R1" target="_blank" style="color: #b45309;">
+                                        DOI: 10.1302/2046-3758.1311.BJR-2024-0203.R1
+                                    </a>
+                                    <br>Correlation of cross-linking as measured by the trans-vinylene index and in vitro wear of polyethylene
+                                </div>
+                            </div>
+                        `;
+                    }
                 }
             });
             
@@ -11610,7 +11642,11 @@
             
             const avgOxidation = oxidationValues.length > 0 ? (oxidationValues.reduce((a, b) => a + b, 0) / oxidationValues.length).toFixed(4) : 'N/A';
             const avgCrystallinity = crystallinityValues.length > 0 ? (crystallinityValues.reduce((a, b) => a + b, 0) / crystallinityValues.length).toFixed(4) : 'N/A';
-            const avgTvi = tviValues.length > 0 ? (tviValues.reduce((a, b) => a + b, 0) / tviValues.length).toFixed(4) : 'N/A';
+            const avgTviNum = tviValues.length > 0 ? (tviValues.reduce((a, b) => a + b, 0) / tviValues.length) : null;
+            const avgTvi = avgTviNum !== null ? avgTviNum.toFixed(4) : 'N/A';
+            
+            // Calculate irradiation dose from TVI: Dose (kGy) = 4196.8 * TVI - 12.331
+            const irradiationDose = avgTviNum !== null ? (4196.8 * avgTviNum - 12.331).toFixed(2) : 'N/A';
             
             const summaryMessage = `
 🔬 **COMPLETE ANALYSIS FINISHED**
@@ -11619,6 +11655,7 @@
 • Oxidation: ${oxidationCount} samples (average: ${avgOxidation})
 • Crystallinity: ${crystallinityCount} samples (average: ${avgCrystallinity})
 • TVI: ${tviCount} samples (average: ${avgTvi})
+${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose} kGy**\n   (Calculated from mean TVI)` : ''}
 
 ✅ All analyses have been completed with automatic baseline
 📈 Charts and results are available in the corresponding tabs

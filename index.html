@@ -16031,8 +16031,34 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                             const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                             const csv = XLSX.utils.sheet_to_csv(firstSheet);
                             spectraData = parseCSVToSpectra(csv);
-                        } else if (fileName.endsWith('.dpt') || fileName.endsWith('.spc') || fileName.endsWith('.0')) {
-                            // Handle DPT and other binary-like formats
+                        } else if (fileName.endsWith('.spc') || fileName.endsWith('.0')) {
+                            // Handle SPC binary files - use proper SPC parser
+                            const buffer = e.target.result;
+                            const parsedSpc = parseSPCBuffer(buffer, file.name);
+                            
+                            if (Array.isArray(parsedSpc)) {
+                                // Multiple spectra in one SPC file
+                                parsedSpc.forEach((spectrum, index) => {
+                                    const depthLabel = `${spectrum.metadata.depth}μm`;
+                                    spectraData[depthLabel] = {
+                                        depth: spectrum.metadata.depth,
+                                        frequency: spectrum.frequency,
+                                        transmittance: spectrum.transmittance,
+                                        wavenumber: spectrum.frequency
+                                    };
+                                });
+                            } else if (parsedSpc && parsedSpc.frequency && parsedSpc.transmittance) {
+                                // Single spectrum
+                                const depthLabel = parsedSpc.metadata?.depth ? `${parsedSpc.metadata.depth}μm` : '0μm';
+                                spectraData[depthLabel] = {
+                                    depth: parsedSpc.metadata?.depth || 0,
+                                    frequency: parsedSpc.frequency,
+                                    transmittance: parsedSpc.transmittance,
+                                    wavenumber: parsedSpc.frequency
+                                };
+                            }
+                        } else if (fileName.endsWith('.dpt')) {
+                            // Handle DPT text format
                             spectraData = parseDPTToSpectra(e.target.result, file.name);
                         } else {
                             // Try CSV parsing for txt/csv files
@@ -16052,7 +16078,7 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                 
                 reader.onerror = () => reject(new Error('Failed to read file'));
                 
-                if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+                if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls') || fileName.endsWith('.spc') || fileName.endsWith('.0')) {
                     reader.readAsArrayBuffer(file);
                 } else {
                     reader.readAsText(file);

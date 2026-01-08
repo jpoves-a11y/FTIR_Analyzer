@@ -205,7 +205,8 @@
         }
 
         .analysis-plot-container .plot-container {
-            height: 400px;
+            height: auto;
+            min-height: 400px;
             overflow: hidden;
             padding: 0;
             border: none;
@@ -14504,7 +14505,6 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                 },
                 margin: { l: 60, r: 10, t: 20, b: 40 },
                 autosize: true,
-                height: 400,
                 hovermode: 'closest',
                 legend: {
                     x: 1,

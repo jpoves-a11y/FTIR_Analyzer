@@ -205,9 +205,11 @@
         }
 
         .analysis-plot-container .plot-container {
-            height: 420px;
+            height: 400px;
             overflow: hidden;
             padding: 0;
+            border: none;
+            box-shadow: none;
         }
 
         /* Form Styles */
@@ -14500,8 +14502,9 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                     showgrid: true,
                     gridcolor: 'rgba(128,128,128,0.2)'
                 },
-                margin: { l: 60, r: 10, t: 40, b: 40 },
+                margin: { l: 60, r: 10, t: 20, b: 40 },
                 autosize: true,
+                height: 400,
                 hovermode: 'closest',
                 legend: {
                     x: 1,

@@ -14288,6 +14288,10 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                 // Process each depth BY LITERALLY RUNNING THE INDIVIDUAL DECONVOLUTION
                 for (let i = 0; i < depths.length; i++) {
                     const depth = depths[i];
+                    // Update progress at the START of processing this depth
+                    const currentProgress = (i / depths.length) * 100;
+                    progressBar.style.width = currentProgress + '%';
+                    
                     // Update text immediately
                     progressText.textContent = `Processing ${depth} (${i + 1}/${depths.length})...`;
                     

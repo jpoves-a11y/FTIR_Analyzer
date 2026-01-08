@@ -14288,8 +14288,7 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                 // Process each depth BY LITERALLY RUNNING THE INDIVIDUAL DECONVOLUTION
                 for (let i = 0; i < depths.length; i++) {
                     const depth = depths[i];
-                    const progress = ((i + 1) / depths.length) * 100;
-                    progressBar.style.width = progress + '%';
+                    // Update text immediately
                     progressText.textContent = `Processing ${depth} (${i + 1}/${depths.length})...`;
                     
                     try {
@@ -14369,6 +14368,10 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                     
                     // Small delay to allow UI updates
                     await new Promise(resolve => setTimeout(resolve, 50));
+                    
+                    // Update progress after step is COMPLETE for smoother visuals
+                    const finalProgress = ((i + 1) / depths.length) * 100;
+                    progressBar.style.width = finalProgress + '%';
                 }
                 
                 // Restore original depth selection

@@ -243,32 +243,29 @@
             height: 100% !important;
         }
 
-        /* Elimina el fondo y bordes del área de trazado interna */
         .js-plotly-plot .plotly .main-svg .cartesianlayer .subplot .plot .bg {
             fill: #ffffff !important;
-            stroke-width: 0 !important;
+        }
+
+        /* Remove internal offsets that cause axes to be cut off */
+        .js-plotly-plot .plotly .svg-container {
             width: 100% !important;
             height: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
 
-        /* Reset total de transformaciones de Plotly que causan paddings */
-        .js-plotly-plot .plotly .cartesianlayer .subplot .plot,
-        .js-plotly-plot .plotly .cartesianlayer .subplot .overplot,
-        .js-plotly-plot .plotly .cartesianlayer .subplot .gridlayer,
-        .js-plotly-plot .plotly .cartesianlayer .subplot .plot .xy,
-        .js-plotly-plot .plotly .cartesianlayer .subplot .canvas {
-            transform: translate(0,0) !important;
+        /* Ensure plot area is properly positioned within the SVG */
+        .js-plotly-plot .plotly .cartesianlayer .subplot .plot {
+            clip-path: none !important;
         }
 
-        /* Ocultar ejes y etiquetas que roban espacio */
-        .js-plotly-plot .plotly .main-svg .cartesianlayer .subplot .axis,
-        .js-plotly-plot .plotly .main-svg .cartesianlayer .subplot .xtick,
-        .js-plotly-plot .plotly .main-svg .cartesianlayer .subplot .ytick,
-        .js-plotly-plot .plotly .main-svg .legend {
-            display: none !important;
+        /* Sync all deconvolution sub-tabs to ensure plots initialize correctly */
+        #deconvolutionSubTabsContent .tab-pane {
+            width: 100% !important;
         }
 
-        /* Ajuste de contenedores Bootstrap */
+        /* Reset any bootstrap row/col padding that might be interfering */
         .analysis-plot-container {
             padding: 0 !important;
             margin: 0 !important;
@@ -14686,41 +14683,37 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                     showgrid: true,
                     gridcolor: 'rgba(128,128,128,0.2)'
                 },
-                margin: { l: 0, r: 0, t: 0, b: 0 },
+                margin: { l: 65, r: 25, t: 25, b: 45 },
                 pad: 0,
                 autosize: true,
                 height: 400,
                 hovermode: 'closest',
-                showlegend: false,
+                showlegend: true,
                 xaxis: {
-                    title: '',
+                    title: 'Depth (µm)',
                     showgrid: true,
                     gridcolor: 'rgba(128,128,128,0.1)',
-                    automargin: false,
-                    ticks: '',
-                    showticklabels: true,
+                    automargin: true,
+                    ticks: 'outside',
                     mirror: true,
                     showline: true,
-                    linecolor: '#ccc',
+                    linecolor: '#333',
                     linewidth: 1,
-                    fixedrange: true,
-                    zeroline: false,
-                    range: undefined
+                    fixedrange: false,
+                    zeroline: true
                 },
                 yaxis: {
-                    title: '',
+                    title: 'Concentration (mmol/cm³)',
                     showgrid: true,
                     gridcolor: 'rgba(128,128,128,0.1)',
-                    automargin: false,
-                    ticks: '',
-                    showticklabels: true,
+                    automargin: true,
+                    ticks: 'outside',
                     mirror: true,
                     showline: true,
-                    linecolor: '#ccc',
+                    linecolor: '#333',
                     linewidth: 1,
-                    fixedrange: true,
-                    zeroline: false,
-                    range: undefined
+                    fixedrange: false,
+                    zeroline: true
                 },
                 legend: {
                     x: 1,

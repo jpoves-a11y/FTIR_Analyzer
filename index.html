@@ -194,7 +194,8 @@
 
         /* Plot Container Styles */
         .plot-container {
-            height: 700px;
+            min-height: 350px;
+            height: auto;
             background-color: white;
             border-radius: var(--border-radius-sm);
             border: 1px solid var(--border-color);
@@ -210,7 +211,8 @@
             border: none;
             box-shadow: none;
             margin: 0;
-            height: 400px;
+            min-height: 300px;
+            height: auto;
             width: 100%;
         }
 
@@ -14514,7 +14516,7 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                     showgrid: true,
                     gridcolor: 'rgba(128,128,128,0.2)'
                 },
-                margin: { l: 60, r: 10, t: 30, b: 40 }, /* Márgenes idénticos a individual */
+                margin: { l: 50, r: 10, t: 30, b: 35 },
                 autosize: true,
                 hovermode: 'closest',
                 legend: {

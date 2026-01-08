@@ -208,12 +208,13 @@
         .analysis-plot-container .plot-container {
             overflow: hidden;
             padding: 0;
-            border: none;
+            border: 1px solid var(--border-color);
             box-shadow: none;
             margin: 0;
             height: 400px !important;
             width: 100% !important;
             display: block;
+            background: white;
         }
 
         .analysis-plot-container .plot-container .js-plotly-plot {
@@ -221,9 +222,17 @@
             width: 100% !important;
         }
 
-        /* Asegurar que el contenedor de Plotly no tenga padding interno */
-        .js-plotly-plot .plotly .main-svg {
+        /* Ajustar el SVG interno de Plotly para ocupar todo el espacio */
+        .js-plotly-plot .plotly .main-svg, 
+        .js-plotly-plot .plotly .draglayer,
+        .js-plotly-plot .plotly .layer-svg {
             border-radius: 0 !important;
+        }
+
+        /* Forzar que el lienzo de dibujo no tenga paddings */
+        .js-plotly-plot .plotly .cartesianlayer,
+        .js-plotly-plot .plotly .gridlayer {
+            transform: translate(0,0);
         }
 
         /* Form Styles */
@@ -14612,7 +14621,8 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                     showgrid: true,
                     gridcolor: 'rgba(128,128,128,0.2)'
                 },
-                margin: { l: 60, r: 20, t: 30, b: 40 },
+                margin: { l: 50, r: 20, t: 30, b: 40 },
+                pad: 2,
                 autosize: true,
                 height: 400,
                 hovermode: 'closest',

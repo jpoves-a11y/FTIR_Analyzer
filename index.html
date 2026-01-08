@@ -194,18 +194,36 @@
 
         /* Plot Container Styles */
         .plot-container {
-            height: 700px;
+            min-height: 350px;
+            height: auto;
             background-color: white;
             border-radius: var(--border-radius-sm);
             border: 1px solid var(--border-color);
             margin-bottom: 1rem;
             position: relative;
-            overflow: visible;
-            padding: 16px;
+            overflow: hidden;
+            padding: 0;
         }
 
         .analysis-plot-container .plot-container {
-            height: 420px;
+            overflow: hidden;
+            padding: 0;
+            border: none;
+            box-shadow: none;
+            margin: 0;
+            height: 400px !important;
+            width: 100% !important;
+            display: block;
+        }
+
+        .analysis-plot-container .plot-container .js-plotly-plot {
+            height: 100% !important;
+            width: 100% !important;
+        }
+
+        /* Asegurar que el contenedor de Plotly no tenga padding interno */
+        .js-plotly-plot .plotly .main-svg {
+            border-radius: 0 !important;
         }
 
         /* Form Styles */
@@ -3060,7 +3078,7 @@
                                                             <i class="fas fa-undo me-1"></i>Reset
                                                         </button>
                                                     </div>
-                                                    <div id="multiDeconvPlot" class="plot-container" style="height: 500px;"></div>
+                                                    <div id="multiDeconvPlot" class="plot-container"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -4270,6 +4288,9 @@
                     throw new Error('No data found in files');
                 }
                 
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.error('Error loading files:', error);
                 alert(`Error loading files: ${error.message}`);
@@ -4336,7 +4357,10 @@
                     } else {
                         console.warn(`Failed to load data from ${fileData.originalName}`);
                     }
-                } catch (error) {
+                    window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
+            } catch (error) {
                     console.error(`Error loading ${fileData.originalName}:`, error);
                 }
             }
@@ -4371,6 +4395,9 @@
                 }
                 
                 return result;
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.error('Error in interpolation:', error);
                 return null;
@@ -4432,7 +4459,10 @@
                         
                         console.log('Excel data loaded:', jsonData.length, 'rows');
                         resolve(jsonData);
-                    } catch (error) {
+                        window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
+            } catch (error) {
                         reject(new Error('Error analyzing Excel file: ' + error.message));
                     }
                 };
@@ -4490,7 +4520,10 @@
                         
                         console.log('Text data loaded:', data.length, 'rows, delimiter:', bestDelimiter);
                         resolve(data);
-                    } catch (error) {
+                        window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
+            } catch (error) {
                         reject(new Error('Error analyzing text file: ' + error.message));
                     }
                 };
@@ -4555,13 +4588,19 @@
                             else {
                                 reject(new Error('Unable to extract spectral data from file'));
                             }
-                        } catch (error) {
+                            window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
+            } catch (error) {
                             reject(error);
                         }
                     };
                     
                     reader.onerror = () => reject(new Error('Error reading binary file'));
                     reader.readAsArrayBuffer(file);
+                });
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
                 });
             } catch (error) {
                 console.error('Error in loadBinaryFile:', error);
@@ -5030,6 +5069,9 @@
                         ...opusData.metadata
                     }
                 };
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.error('Error parsing OPUS file:', error);
                 throw new Error(`Error processing OPUS file: ${error.message}`);
@@ -5720,7 +5762,10 @@
                             } else {
                                 reject(new Error('No se pudieron extraer datos válidos del archivo SPC'));
                             }
-                        } catch (error) {
+                            window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
+            } catch (error) {
                             console.error('Error procesando SPC:', error);
                             reject(new Error('Error al procesar archivo SPC: ' + error.message));
                         }
@@ -5731,6 +5776,9 @@
                     };
                     
                     reader.readAsArrayBuffer(file);
+                });
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
                 });
             } catch (error) {
                 console.error('Error in loadSPCFile:', error);
@@ -5784,6 +5832,9 @@
                 }
                 
                 return null; // No depth information found
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.warn('Error extracting depth:', error);
                 return null;
@@ -5864,6 +5915,9 @@
                 }
                 
                 return [];
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.warn('Error searching depths in text:', error);
                 return [];
@@ -6155,6 +6209,9 @@
                         version: header.fversn
                     }
                 };
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.error('Error parsing SPC buffer:', error);
                 throw new Error(`Error processing SPC file: ${error.message}`);
@@ -6742,6 +6799,9 @@
                 
                 console.log('Corrección automática de offset completada');
                 
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.error('Error en corrección de offset:', error);
                 alert(`Error en corrección de offset: ${error.message}`);
@@ -6798,6 +6858,9 @@
                 
                 console.log('Automatic baseline correction completed');
                 
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.error('Error in baseline correction:', error);
                 showNotification(`Error in baseline correction: ${error.message}`, 'danger');
@@ -7516,6 +7579,9 @@
                     y: baselineY
                 };
                 
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.error('Error calculando línea base:', error);
                 return null;
@@ -7870,6 +7936,9 @@
 
                 showNotification(`Detección automática completada: ${selectedCandidates.length} puntos seleccionados`, 'success');
 
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.error('Error en detección automática:', error);
                 showNotification('Error en detección automática: ' + error.message, 'error');
@@ -8095,6 +8164,9 @@
                 
                 showNotification('Vista previa generada - Compare original vs corregido', 'success');
                 
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.error('Error en vista previa:', error);
                 showNotification('Error generando vista previa: ' + error.message, 'error');
@@ -8203,6 +8275,9 @@
                 // Actualizar estado de procesamiento
                 updateProcessingStatus(`Línea base aplicada - ${spectrumLabel} (${regionType})`, true);
                 
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.error('Error aplicando línea base:', error);
                 showNotification('Error aplicando corrección: ' + error.message, 'error');
@@ -8300,7 +8375,10 @@
                         
                         // NOTE: Do NOT update window.AppState.spectraData[label] to avoid contamination
                         // Each tab works with its own copy of the data
-                    } catch (error) {
+                        window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
+            } catch (error) {
                         console.error(`Error processing spectrum ${label}:`, error);
                         results[label] = { error: error.message };
                     }
@@ -8323,6 +8401,9 @@
                     showNotification(`Analysis of ${analysisType} completed using original data to avoid cumulative correction`, 'info');
                 }
                 
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.error(`Error in analysis of ${analysisType}:`, error);
                 alert(`Error in analysis of ${analysisType}: ${error.message}`);
@@ -8582,6 +8663,9 @@
                     }
                 };
                 
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.error(`Error in single spectrum analysis:`, error);
                 return {
@@ -9988,6 +10072,9 @@
                 plotDepthProfile();
                 
                 console.log('Reports generated successfully');
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.error('Error generating reports:', error);
                 alert(`Error generating reports: ${error.message}`);
@@ -11162,7 +11249,10 @@
                             name: plot.name,
                             data: imageData
                         };
-                    } catch (error) {
+                        window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
+            } catch (error) {
                         console.warn(`Could not capture chart ${plot.id}:`, error);
                     }
                 }
@@ -11199,7 +11289,10 @@
                             name: plot.name,
                             data: imageData
                         };
-                    } catch (error) {
+                        window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
+            } catch (error) {
                         console.warn(`Could not capture enhanced chart ${plot.id}:`, error);
                     }
                 }
@@ -11398,6 +11491,9 @@
                 hideLoading();
                 showNotification('HTML report with charts generated successfully', 'success');
                 
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.error('Error generating HTML report:', error);
                 hideLoading();
@@ -11644,6 +11740,9 @@
                 hideLoading();
                 showNotification('PDF report generated successfully', 'success');
                 
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.error('Error generating PDF:', error);
                 hideLoading();
@@ -11757,6 +11856,9 @@
                     showAnalysisCompleteSummary();
                 }, 1000);
                 
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.error('Error en análisis completo automático:', error);
                 hideLoading();
@@ -11784,6 +11886,9 @@
             try {
                 plotDepthProfile();
                 console.log('Perfil de profundidad actualizado');
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.error('Error actualizando perfil de profundidad:', error);
             }
@@ -12105,12 +12210,13 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                     showgrid: true,
                     gridcolor: 'rgba(128,128,128,0.2)'
                 },
-                margin: { l: 60, r: 20, t: 60, b: 90 },
+                margin: { l: 50, r: 20, t: 40, b: 50 },
                 showlegend: true,
                 legend: {
-                    x: 1.02,
+                    x: 1.0,
+                    xanchor: 'right',
                     y: 1,
-                    bgcolor: 'rgba(255,255,255,0.9)',
+                    bgcolor: 'rgba(255,255,255,0.7)',
                     bordercolor: '#ddd',
                     borderwidth: 1
                 },
@@ -12259,6 +12365,9 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                 
                 showNotification('Deconvolution completed successfully!', 'success');
                 
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.error('Deconvolution error:', error);
                 showNotification('Error in deconvolution: ' + error.message, 'error');
@@ -14245,7 +14354,10 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                             optimizedFrequencies: optimizedFrequencies
                         });
                         
-                    } catch (error) {
+                        window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
+            } catch (error) {
                         console.error(`Error processing depth ${depth}:`, error);
                         multipleDeconvResults.push({
                             depth: depth,
@@ -14280,6 +14392,9 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                     showNotification(`Note: Individual Deconvolution tab now displays results for the last processed depth (${depths[depths.length - 1]}). Run individual deconvolution again to analyze a specific depth.`, 'info');
                 }, 2000);
                 
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.error('Multiple deconvolution error:', error);
                 showNotification('Error in multiple deconvolution: ' + error.message, 'error');
@@ -14497,12 +14612,15 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                     showgrid: true,
                     gridcolor: 'rgba(128,128,128,0.2)'
                 },
-                margin: { l: 80, r: 40, t: 80, b: 80 },
+                margin: { l: 60, r: 20, t: 30, b: 40 },
+                autosize: true,
+                height: 400,
                 hovermode: 'closest',
                 legend: {
-                    x: 1.02,
+                    x: 1,
+                    xanchor: 'right',
                     y: 1,
-                    bgcolor: 'rgba(255,255,255,0.9)',
+                    bgcolor: 'rgba(255,255,255,0.7)',
                     bordercolor: '#ddd',
                     borderwidth: 1
                 },
@@ -14682,11 +14800,11 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                     zerolinecolor: '#e74c3c',
                     zerolinewidth: 1
                 },
-                margin: { l: 80, r: 80, t: 60, b: 60 },
+                margin: { l: 80, r: 80, t: 60, b: 100 },
                 hovermode: 'closest',
                 legend: {
                     x: 0.5,
-                    y: -0.15,
+                    y: -0.25,
                     xanchor: 'center',
                     orientation: 'h',
                     bgcolor: 'rgba(255,255,255,0.9)',
@@ -14885,6 +15003,9 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                 hideLoading();
                 showNotification('PDF report exported successfully!', 'success');
                 
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.error('Error exporting PDF:', error);
                 hideLoading();
@@ -14995,6 +15116,9 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                 hideLoading();
                 showNotification('Excel file exported successfully!', 'success');
                 
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.error('Error exporting Excel:', error);
                 hideLoading();
@@ -15123,6 +15247,9 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                 
                 showNotification(`Synovial Liquid Analysis completed for ${totalDepths} depths!`, 'success');
                 
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.error('Synovial Liquid Analysis error:', error);
                 showNotification('Error in analysis: ' + error.message, 'error');
@@ -15273,6 +15400,9 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                     referenceBandArea: referenceBandArea,
                     normalizationFactor: deconvolutionResults.normalizationFactor
                 };
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.warn('Background deconvolution failed:', error.message);
                 return null;
@@ -15929,6 +16059,9 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                 hideLoading();
                 showNotification(`${typeName} files loaded successfully! (${Object.keys(spectraData).length} depths)`, 'success');
                 
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 hideLoading();
                 showNotification('Error loading files: ' + error.message, 'error');
@@ -15960,7 +16093,10 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                             };
                         }
                     }
-                } catch (error) {
+                    window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
+            } catch (error) {
                     console.error(`Error loading file ${fileData.originalName}:`, error);
                 }
             }
@@ -16011,6 +16147,9 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                 hideLoading();
                 showNotification(`${type === 'pre' ? 'Pre-Extraction' : 'Post-Extraction'} file loaded successfully!`, 'success');
                 
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 hideLoading();
                 showNotification('Error loading file: ' + error.message, 'error');
@@ -16072,7 +16211,10 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                         }
                         
                         resolve({ spectraData });
-                    } catch (error) {
+                        window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
+            } catch (error) {
                         reject(error);
                     }
                 };
@@ -16395,7 +16537,10 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                         const result = await analyzeDepthForSynovial(spectrum, depth, params);
                         result.source = 'pre';
                         comparativeAnalysisData.preExtraction.results.push(result);
-                    } catch (error) {
+                        window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
+            } catch (error) {
                         console.error(`Pre-Extraction error at ${depth}:`, error);
                         comparativeAnalysisData.preExtraction.results.push({
                             depth: depth,
@@ -16442,7 +16587,10 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                         const result = await analyzeDepthForSynovial(spectrum, depth, params);
                         result.source = 'post';
                         comparativeAnalysisData.postExtraction.results.push(result);
-                    } catch (error) {
+                        window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
+            } catch (error) {
                         console.error(`Post-Extraction error at ${depth}:`, error);
                         comparativeAnalysisData.postExtraction.results.push({
                             depth: depth,
@@ -16489,6 +16637,9 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                 
                 showNotification('Comparative analysis completed successfully!', 'success');
                 
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 console.error('Comparative analysis error:', error);
                 showNotification('Error in comparative analysis: ' + error.message, 'error');
@@ -17041,6 +17192,9 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                 hideLoading();
                 showNotification('PDF exported successfully!', 'success');
                 
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 hideLoading();
                 showNotification('Error exporting PDF: ' + error.message, 'error');
@@ -17118,6 +17272,9 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                 hideLoading();
                 showNotification('Excel exported successfully!', 'success');
                 
+                window.addEventListener('resize', () => {
+                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
+                });
             } catch (error) {
                 hideLoading();
                 showNotification('Error exporting Excel: ' + error.message, 'error');

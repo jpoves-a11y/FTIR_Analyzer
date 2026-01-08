@@ -211,13 +211,18 @@
             box-shadow: none;
             margin: 0;
             height: 400px;
+            width: 100%;
+            display: block;
         }
 
-        .analysis-plot-container .plot-container > div {
-            width: 100% !important;
+        .analysis-plot-container .plot-container .js-plotly-plot {
             height: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
+            width: 100% !important;
+        }
+
+        /* Asegurar que el contenedor de Plotly no tenga padding interno */
+        .js-plotly-plot .plotly .main-svg {
+            border-radius: 0 !important;
         }
 
         /* Form Styles */
@@ -14510,7 +14515,7 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                     showgrid: true,
                     gridcolor: 'rgba(128,128,128,0.2)'
                 },
-                margin: { l: 60, r: 10, t: 30, b: 35 },
+                margin: { l: 60, r: 10, t: 30, b: 40 }, /* Márgenes idénticos a individual */
                 autosize: true,
                 hovermode: 'closest',
                 legend: {
@@ -14520,11 +14525,6 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                     bgcolor: 'rgba(255,255,255,0.7)',
                     bordercolor: '#ddd',
                     borderwidth: 1
-                },
-                template: {
-                    layout: {
-                        margin: { l: 0, r: 0, t: 0, b: 0 }
-                    }
                 },
                 plot_bgcolor: 'rgba(248, 249, 250, 0.6)',
                 paper_bgcolor: 'white'

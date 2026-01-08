@@ -210,11 +210,14 @@
             border: none;
             box-shadow: none;
             margin: 0;
+            height: 400px;
         }
 
         .analysis-plot-container .plot-container > div {
             width: 100% !important;
             height: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
 
         /* Form Styles */
@@ -14517,6 +14520,11 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                     bgcolor: 'rgba(255,255,255,0.7)',
                     bordercolor: '#ddd',
                     borderwidth: 1
+                },
+                template: {
+                    layout: {
+                        margin: { l: 0, r: 0, t: 0, b: 0 }
+                    }
                 },
                 plot_bgcolor: 'rgba(248, 249, 250, 0.6)',
                 paper_bgcolor: 'white'

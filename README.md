@@ -253,7 +253,7 @@ Advanced peak fitting to separate overlapping carbonyl species in the 1650-1800 
 | Esters/Aldehydes | 1735 | 8110 | 18 cm⁻¹ |
 | Ketones | 1721 | 6880 | 15 cm⁻¹ |
 | Carboxylic Acids | 1715 | 16800 | 18 cm⁻¹ |
-| γ-Ketoacids | 1755 (keto), 1705 (acid) | 6880/16800 | 12/15 cm⁻¹ |
+| γ-Ketoacids | 1755 (keto), 1705 (acid) | 16800/16800 | 12/15 cm⁻¹ |
 
 #### Peak Shape Model
 

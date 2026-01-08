@@ -205,16 +205,28 @@
             padding: 0;
         }
 
+        .card-body {
+            padding: 1.25rem !important;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-body .plot-container {
+            margin: 0 !important;
+            width: 100% !important;
+        }
+
         .analysis-plot-container .plot-container {
-            overflow: hidden;
-            padding: 0;
-            border: 1px solid var(--border-color);
+            overflow: hidden !important;
+            padding: 0 !important;
+            border: 1px solid var(--border-color) !important;
             box-shadow: none;
-            margin: 0;
+            margin: 0 !important;
             height: 400px !important;
             width: 100% !important;
-            display: block;
+            display: block !important;
             background: white;
+            position: relative;
         }
 
         .analysis-plot-container .plot-container .js-plotly-plot {
@@ -222,17 +234,70 @@
             width: 100% !important;
         }
 
-        /* Ajustar el SVG interno de Plotly para ocupar todo el espacio */
+        /* Fuerza a Plotly a ocupar absolutamente todo el espacio del contenedor */
+        .js-plotly-plot .plotly .main-svg {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* Elimina el fondo y bordes del área de trazado interna */
+        .js-plotly-plot .plotly .main-svg .cartesianlayer .subplot .plot .bg {
+            fill: #ffffff !important;
+            stroke-width: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* Reset total de transformaciones de Plotly que causan paddings */
+        .js-plotly-plot .plotly .cartesianlayer .subplot .plot,
+        .js-plotly-plot .plotly .cartesianlayer .subplot .overplot,
+        .js-plotly-plot .plotly .cartesianlayer .subplot .gridlayer,
+        .js-plotly-plot .plotly .cartesianlayer .subplot .plot .xy,
+        .js-plotly-plot .plotly .cartesianlayer .subplot .canvas {
+            transform: translate(0,0) !important;
+        }
+
+        /* Ocultar ejes y etiquetas que roban espacio */
+        .js-plotly-plot .plotly .main-svg .cartesianlayer .subplot .axis,
+        .js-plotly-plot .plotly .main-svg .cartesianlayer .subplot .xtick,
+        .js-plotly-plot .plotly .main-svg .cartesianlayer .subplot .ytick,
+        .js-plotly-plot .plotly .main-svg .legend {
+            display: none !important;
+        }
+
+        /* Ajuste de contenedores Bootstrap */
+        .analysis-plot-container {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        /* Fuerza a Plotly a ignorar sus márgenes internos */
         .js-plotly-plot .plotly .main-svg, 
         .js-plotly-plot .plotly .draglayer,
-        .js-plotly-plot .plotly .layer-svg {
+        .js-plotly-plot .plotly .layer-svg,
+        .js-plotly-plot .plotly .gridlayer,
+        .js-plotly-plot .plotly .cartesianlayer {
             border-radius: 0 !important;
         }
 
-        /* Forzar que el lienzo de dibujo no tenga paddings */
-        .js-plotly-plot .plotly .cartesianlayer,
-        .js-plotly-plot .plotly .gridlayer {
-            transform: translate(0,0);
+        .js-plotly-plot .plotly .main-svg {
+            background: transparent !important;
+        }
+
+        .js-plotly-plot .plotly .bglayer rect {
+            fill: transparent !important;
+        }
+
+        /* Asegura que el área de trazado ocupe todo el SVG */
+        .js-plotly-plot .plotly .main-svg .cartesianlayer .subplot .plot .xy {
+            transform: translate(0,0) !important;
+        }
+
+        .js-plotly-plot .plotly .main-svg .cartesianlayer .subplot .canvas {
+            transform: translate(0,0) !important;
         }
 
         /* Form Styles */
@@ -14621,11 +14686,42 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                     showgrid: true,
                     gridcolor: 'rgba(128,128,128,0.2)'
                 },
-                margin: { l: 50, r: 20, t: 30, b: 40 },
-                pad: 2,
+                margin: { l: 0, r: 0, t: 0, b: 0 },
+                pad: 0,
                 autosize: true,
                 height: 400,
                 hovermode: 'closest',
+                showlegend: false,
+                xaxis: {
+                    title: '',
+                    showgrid: true,
+                    gridcolor: 'rgba(128,128,128,0.1)',
+                    automargin: false,
+                    ticks: '',
+                    showticklabels: true,
+                    mirror: true,
+                    showline: true,
+                    linecolor: '#ccc',
+                    linewidth: 1,
+                    fixedrange: true,
+                    zeroline: false,
+                    range: undefined
+                },
+                yaxis: {
+                    title: '',
+                    showgrid: true,
+                    gridcolor: 'rgba(128,128,128,0.1)',
+                    automargin: false,
+                    ticks: '',
+                    showticklabels: true,
+                    mirror: true,
+                    showline: true,
+                    linecolor: '#ccc',
+                    linewidth: 1,
+                    fixedrange: true,
+                    zeroline: false,
+                    range: undefined
+                },
                 legend: {
                     x: 1,
                     xanchor: 'right',

@@ -14252,6 +14252,9 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                 runBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
                 progressDiv.style.display = 'block';
                 
+                // Add CSS transition for smooth movement
+                progressBar.style.transition = 'width 0.4s ease-out';
+                
                 // Get all available depths
                 const spectraData = window.AppState.spectraData;
                 if (!spectraData || Object.keys(spectraData).length === 0) {
@@ -14288,6 +14291,7 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                 // Process each depth BY LITERALLY RUNNING THE INDIVIDUAL DECONVOLUTION
                 for (let i = 0; i < depths.length; i++) {
                     const depth = depths[i];
+                    
                     // Update progress at the START of processing this depth
                     const currentProgress = (i / depths.length) * 100;
                     progressBar.style.width = currentProgress + '%';
@@ -14372,11 +14376,12 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                     
                     // Small delay to allow UI updates
                     await new Promise(resolve => setTimeout(resolve, 50));
-                    
-                    // Update progress after step is COMPLETE for smoother visuals
-                    const finalProgress = ((i + 1) / depths.length) * 100;
-                    progressBar.style.width = finalProgress + '%';
                 }
+                
+                // Final update to 100% when everything is done
+                progressBar.style.width = '100%';
+                progressText.textContent = 'Finalizing results...';
+                await new Promise(resolve => setTimeout(resolve, 400));
                 
                 // Restore original depth selection
                 depthSelect.value = originalDepth;

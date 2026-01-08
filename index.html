@@ -200,12 +200,14 @@
             border: 1px solid var(--border-color);
             margin-bottom: 1rem;
             position: relative;
-            overflow: visible;
-            padding: 16px;
+            overflow: hidden;
+            padding: 0;
         }
 
         .analysis-plot-container .plot-container {
             height: 420px;
+            overflow: hidden;
+            padding: 0;
         }
 
         /* Form Styles */
@@ -12105,12 +12107,13 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                     showgrid: true,
                     gridcolor: 'rgba(128,128,128,0.2)'
                 },
-                margin: { l: 60, r: 20, t: 60, b: 90 },
+                margin: { l: 50, r: 20, t: 40, b: 50 },
                 showlegend: true,
                 legend: {
-                    x: 1.02,
+                    x: 1.0,
+                    xanchor: 'right',
                     y: 1,
-                    bgcolor: 'rgba(255,255,255,0.9)',
+                    bgcolor: 'rgba(255,255,255,0.7)',
                     bordercolor: '#ddd',
                     borderwidth: 1
                 },

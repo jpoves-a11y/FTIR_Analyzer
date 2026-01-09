@@ -618,34 +618,38 @@
             overflow-y: auto;
             border: 1px solid var(--border-color);
             border-radius: 0.5rem;
-            padding: 0.75rem 0.75rem 0.75rem 0.5rem;
+            padding: 0.75rem;
             background-color: #f8f9fa;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .form-check {
             margin-bottom: 0.5rem;
-            padding: 0.25rem 0;
-            padding-left: 0.5rem;
+            padding: 0.25rem 0.5rem;
             position: relative;
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .form-check-input {
-            position: absolute;
-            left: 200px; /* Movimiento muy exagerado hacia la derecha */
-            margin-top: 0;
-            margin-left: 0;
+            order: 2;
+            position: static;
+            margin: 0;
             width: 1.2rem;
             height: 1.2rem;
             cursor: pointer;
         }
 
         .form-check-label {
+            order: 1;
             cursor: pointer;
             user-select: none;
-            width: 100%;
-            padding-left: 235px; /* Desplazamiento muy exagerado hacia la derecha */
+            flex-grow: 1;
+            padding-left: 0;
         }
 
         .form-check:last-child {

@@ -636,49 +636,41 @@
             gap: 1rem;
         }
 
-        .depth-selector {
-            width: 100% !important;
-            max-width: 100% !important;
-            margin-bottom: 1.5rem !important;
-            box-sizing: border-box;
-            display: block;
-        }
-
         .depths-checklist {
-            width: 100% !important;
-            max-width: 100% !important;
-            box-sizing: border-box !important;
-            margin: 0.75rem 0 0 0 !important;
-            border: 1px solid #dee2e6 !important;
-            border-radius: 0.375rem !important;
-            background: white !important;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 0.5rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            background: white;
             max-height: 250px;
             overflow-y: auto;
+            padding: 0.75rem;
         }
 
-        .depth-selector h6 {
-            margin-bottom: 1rem;
+        .depth-selector-container {
+            width: 100%;
+            margin-bottom: 1.5rem;
+        }
+
+        .depth-selector-container h6 {
+            margin-bottom: 0.75rem;
             font-weight: 600;
             color: var(--dark-color);
             display: flex;
             align-items: center;
         }
 
-        .depth-selector .btn-group {
+        .depth-selector-container .btn-group {
             width: 100%;
             display: flex;
-            margin-bottom: 0.5rem;
         }
 
-        .depth-selector .btn-group .btn {
+        .depth-selector-container .btn-group .btn {
             flex: 1;
-            font-size: 0.75rem;
-            padding: 0.4rem 0.2rem;
-            border: 1px solid #dee2e6;
-        }
-
-        .depth-selector .btn-group .btn:not(:last-child) {
-            border-right: none;
+            font-size: 0.7rem;
+            padding: 0.35rem 0.1rem;
+            white-space: nowrap;
         }
 
         .form-check-container {
@@ -2182,25 +2174,15 @@
                                 <div class="col-md-3">
                                     <div class="analysis-controls">
                                         <!-- Depth Selection Control -->
-                                        <div class="depth-selector mb-4">
+                                        <div class="depth-selector-container">
                                             <h6><i class="fas fa-layer-group me-2"></i>Depth Selection</h6>
-                                            <div class="depth-controls-container">
-                                                <div class="mb-3">
-                                                    <div class="btn-group d-flex" role="group">
-                                                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="selectAllDepths('oxidation')">
-                                                            <i class="fas fa-check-double"></i> All
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="selectNoneDepths('oxidation')">
-                                                            <i class="fas fa-times"></i> None
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-info btn-sm" onclick="selectEveryNDepths('oxidation', 5)">
-                                                            <i class="fas fa-th"></i> Every 5th
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <div class="depths-checklist" id="oxidationDepthsList" style="max-height: 250px; overflow-y: auto; padding: 0.75rem;">
-                                                    <p class="text-muted small mb-0">Load data to see depths</p>
-                                                </div>
+                                            <div class="btn-group d-flex mb-2" role="group">
+                                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="selectAllDepths('oxidation')">All</button>
+                                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="selectNoneDepths('oxidation')">None</button>
+                                                <button type="button" class="btn btn-outline-info btn-sm" onclick="selectEveryNDepths('oxidation', 5)">5th</button>
+                                            </div>
+                                            <div class="depths-checklist" id="oxidationDepthsList">
+                                                <p class="text-muted small mb-0">Load data to see depths</p>
                                             </div>
                                         </div>
                                         
@@ -2352,25 +2334,15 @@
                                 <div class="col-md-3">
                                     <div class="analysis-controls">
                                         <!-- Depth Selection Control -->
-                                        <div class="depth-selector mb-4">
+                                        <div class="depth-selector-container">
                                             <h6><i class="fas fa-layer-group me-2"></i>Depth Selection</h6>
-                                            <div class="depth-controls-container">
-                                                <div class="mb-3">
-                                                    <div class="btn-group d-flex" role="group">
-                                                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="selectAllDepths('crystallinity')">
-                                                            <i class="fas fa-check-double"></i> All
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="selectNoneDepths('crystallinity')">
-                                                            <i class="fas fa-times"></i> None
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-info btn-sm" onclick="selectEveryNDepths('crystallinity', 5)">
-                                                            <i class="fas fa-th"></i> Every 5th
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <div class="depths-checklist" id="crystallinityDepthsList" style="max-height: 250px; overflow-y: auto; padding: 0.75rem;">
-                                                    <p class="text-muted small mb-0">Load data to see depths</p>
-                                                </div>
+                                            <div class="btn-group d-flex mb-2" role="group">
+                                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="selectAllDepths('crystallinity')">All</button>
+                                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="selectNoneDepths('crystallinity')">None</button>
+                                                <button type="button" class="btn btn-outline-info btn-sm" onclick="selectEveryNDepths('crystallinity', 5)">5th</button>
+                                            </div>
+                                            <div class="depths-checklist" id="crystallinityDepthsList">
+                                                <p class="text-muted small mb-0">Load data to see depths</p>
                                             </div>
                                         </div>
                                         
@@ -2546,25 +2518,15 @@
                                 <div class="col-md-3">
                                     <div class="analysis-controls">
                                         <!-- Depth Selection Control -->
-                                        <div class="depth-selector mb-4">
+                                        <div class="depth-selector-container">
                                             <h6><i class="fas fa-layer-group me-2"></i>Depth Selection</h6>
-                                            <div class="depth-controls-container">
-                                                <div class="mb-3">
-                                                    <div class="btn-group d-flex" role="group">
-                                                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="selectAllDepths('tvi')">
-                                                            <i class="fas fa-check-double"></i> All
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="selectNoneDepths('tvi')">
-                                                            <i class="fas fa-times"></i> None
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-info btn-sm" onclick="selectEveryNDepths('tvi', 5)">
-                                                            <i class="fas fa-th"></i> Every 5th
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <div class="depths-checklist" id="tviDepthsList" style="max-height: 250px; overflow-y: auto; padding: 0.75rem;">
-                                                    <p class="text-muted small mb-0">Load data to see depths</p>
-                                                </div>
+                                            <div class="btn-group d-flex mb-2" role="group">
+                                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="selectAllDepths('tvi')">All</button>
+                                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="selectNoneDepths('tvi')">None</button>
+                                                <button type="button" class="btn btn-outline-info btn-sm" onclick="selectEveryNDepths('tvi', 5)">5th</button>
+                                            </div>
+                                            <div class="depths-checklist" id="tviDepthsList">
+                                                <p class="text-muted small mb-0">Load data to see depths</p>
                                             </div>
                                         </div>
                                         
@@ -3389,25 +3351,16 @@
                                         <div class="col-md-3">
                                             <div class="analysis-controls">
                                                 <!-- Depth Selection Control -->
-                                                <div class="depth-selector mb-4">
+                                                <!-- Depth Selection Control -->
+                                                <div class="depth-selector-container">
                                                     <h6><i class="fas fa-layer-group me-2"></i>Depth Selection</h6>
-                                                    <div class="depth-controls-container">
-                                                        <div class="mb-3">
-                                                            <div class="btn-group d-flex" role="group">
-                                                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="selectAllDepths('vitaminE')">
-                                                                    <i class="fas fa-check-double"></i> All
-                                                                </button>
-                                                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="selectNoneDepths('vitaminE')">
-                                                                    <i class="fas fa-times"></i> None
-                                                                </button>
-                                                                <button type="button" class="btn btn-outline-info btn-sm" onclick="selectEveryNDepths('vitaminE', 5)">
-                                                                    <i class="fas fa-th"></i> Every 5th
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                        <div class="depths-checklist" id="vitaminEDepthsList" style="max-height: 250px; overflow-y: auto; padding: 0.75rem;">
-                                                            <p class="text-muted small mb-0">Load data to see depths</p>
-                                                        </div>
+                                                    <div class="btn-group d-flex mb-2" role="group">
+                                                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="selectAllDepths('vitaminE')">All</button>
+                                                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="selectNoneDepths('vitaminE')">None</button>
+                                                        <button type="button" class="btn btn-outline-info btn-sm" onclick="selectEveryNDepths('vitaminE', 5)">5th</button>
+                                                    </div>
+                                                    <div class="depths-checklist" id="vitaminEDepthsList">
+                                                        <p class="text-muted small mb-0">Load data to see depths</p>
                                                     </div>
                                                 </div>
                                                 

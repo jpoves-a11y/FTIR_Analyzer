@@ -8,3 +8,4 @@
 [x] 13. Alinear radios de banda de referencia a la izquierda del texto en pestañas de deconvolution
 [x] 14. Corregir estilos globales para que todos los checkboxes y radios aparezcan a la izquierda del texto
 [x] 15. Ajustar anchura del cuadro de selección de profundidades al 100%
+[x] 16. Reducir anchura del cuadro de selección de profundidades al 50% y centrarlo en el contenedor

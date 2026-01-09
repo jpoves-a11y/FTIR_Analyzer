@@ -9281,10 +9281,10 @@
                 // Añadir checkboxes para cada profundidad
                 depths.forEach((depth, index) => {
                     const checkboxDiv = document.createElement('div');
-                    checkboxDiv.className = 'form-check form-check-sm mb-1';
+                    checkboxDiv.className = 'form-check form-check-sm mb-1 d-flex align-items-center';
                     
                     const checkbox = document.createElement('input');
-                    checkbox.className = 'form-check-input';
+                    checkbox.className = 'form-check-input mt-0';
                     checkbox.type = 'checkbox';
                     checkbox.id = `${analysisType}_depth_${index}`;
                     checkbox.value = depth;
@@ -9296,13 +9296,13 @@
                     });
                     
                     const label = document.createElement('label');
-                    label.className = 'form-check-label text-sm ps-2';
+                    label.className = 'form-check-label text-sm ms-2';
                     label.htmlFor = checkbox.id;
                     label.textContent = depth;
                     
                     // Mostrar color asociado
                     const colorIndicator = document.createElement('span');
-                    colorIndicator.className = 'depth-color-indicator';
+                    colorIndicator.className = 'depth-color-indicator ms-2';
                     const color = generateDepthColor(index, depths.length);
                     colorIndicator.style.cssText = `
                         display: inline-block;
@@ -9310,13 +9310,12 @@
                         height: 12px;
                         background-color: ${color};
                         border-radius: 50%;
-                        margin-right: 6px;
                         vertical-align: middle;
                     `;
                     
                     checkboxDiv.appendChild(checkbox);
-                    checkboxDiv.appendChild(colorIndicator);
                     checkboxDiv.appendChild(label);
+                    checkboxDiv.appendChild(colorIndicator);
                     depthsList.appendChild(checkboxDiv);
                 });
                 

@@ -4,3 +4,4 @@
 [x] 4. Inform user the import is completed and they can start building, mark the import as completed using the complete_project_import tool
 [x] 5. Ajustar gráfico FTIR Spectra Overview - leyenda dentro del marco
 [x] 11. Eliminar dimensiones fijas y habilitar autosize total en gráficas y contenedores
+[x] 12. Cambiar checkboxes a la izquierda del texto en el selector de profundidades

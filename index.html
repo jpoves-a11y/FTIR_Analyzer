@@ -651,8 +651,12 @@
         }
 
         .depths-checklist .form-check {
-            margin-bottom: 0.15rem;
-            padding: 0.5rem 0.75rem;
+            display: flex !important;
+            align-items: center !important;
+            padding: 0.5rem 0.75rem !important;
+            margin-bottom: 0.15rem !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
             border-radius: 0.375rem;
             transition: all 0.2s ease;
             border-bottom: 1px solid #edf2f7;
@@ -667,108 +671,25 @@
             transform: translateX(2px);
         }
 
-        .depths-checklist::-webkit-scrollbar {
-            width: 5px;
-        }
-
-        .depths-checklist::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.02);
-            border-radius: 10px;
-        }
-
-        .depths-checklist::-webkit-scrollbar-thumb {
-            background: #cbd5e0;
-            border-radius: 10px;
-        }
-
-        .depths-checklist::-webkit-scrollbar-thumb:hover {
-            background: #a0aec0;
-        }
-
-        .depth-selector-container {
-            width: 100%;
-            margin-bottom: 1.5rem;
-            background-color: #f8f9fa;
-            padding: 1.25rem 1.5rem;
-            border-radius: 0.75rem;
-            border: 1px solid #cbd5e0;
-            box-sizing: border-box;
-            display: block;
-        }
-
-        .depth-selector-container h6 {
-            margin-bottom: 0.75rem;
-            font-weight: 600;
-            color: var(--dark-color);
-            display: flex;
-            align-items: center;
-        }
-
-        .depth-selector-container .btn-group {
-            width: 100%;
-            display: flex;
-        }
-
-        .depth-selector-container .btn-group .btn {
-            flex: 1;
-            font-size: 0.7rem;
-            padding: 0.35rem 0.1rem;
-            white-space: nowrap;
-        }
-
-        .col-analysis-sidebar {
-            width: 35% !important;
-            flex: 0 0 35% !important;
-            max-width: 35% !important;
-        }
-
-        .col-analysis-content {
-            width: 65% !important;
-            flex: 0 0 65% !important;
-            max-width: 65% !important;
-        }
-
-        .form-check-container {
-            max-height: 200px;
-            overflow-y: auto;
-            border: 1px solid var(--border-color);
-            border-radius: 0.5rem;
-            padding: 0.75rem;
-            background-color: #f8f9fa;
-            box-sizing: border-box;
-        }
-
-        .form-check {
-            margin-bottom: 0.5rem;
-            padding: 0.25rem 0.5rem;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
         .form-check-input {
-            order: 1;
-            position: static;
-            margin: 0;
+            margin: 0 !important;
+            flex-shrink: 0 !important;
             width: 1.2rem;
             height: 1.2rem;
             cursor: pointer;
         }
 
         .form-check-label {
-            order: 2;
+            margin-left: 1.25rem !important;
+            flex-grow: 1 !important;
             cursor: pointer;
             user-select: none;
-            flex-grow: 1;
-            padding-left: 1rem;
+            font-size: 0.9rem;
         }
 
         .depth-color-indicator {
-            margin-left: 1.5rem;
-            flex-shrink: 0;
+            margin-left: 1.5rem !important;
+            flex-shrink: 0 !important;
         }
 
         .form-check:last-child {
@@ -9359,10 +9280,10 @@
                 // Añadir checkboxes para cada profundidad
                 depths.forEach((depth, index) => {
                     const checkboxDiv = document.createElement('div');
-                    checkboxDiv.className = 'form-check form-check-sm mb-1 d-flex align-items-center';
+                    checkboxDiv.className = 'form-check';
                     
                     const checkbox = document.createElement('input');
-                    checkbox.className = 'form-check-input mt-0';
+                    checkbox.className = 'form-check-input';
                     checkbox.type = 'checkbox';
                     checkbox.id = `${analysisType}_depth_${index}`;
                     checkbox.value = depth;
@@ -9374,7 +9295,7 @@
                     });
                     
                     const label = document.createElement('label');
-                    label.className = 'form-check-label text-sm ms-2';
+                    label.className = 'form-check-label';
                     label.htmlFor = checkbox.id;
                     label.textContent = depth;
                     

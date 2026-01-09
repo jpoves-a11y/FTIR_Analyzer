@@ -5,3 +5,4 @@
 [x] 5. Ajustar gráfico FTIR Spectra Overview - leyenda dentro del marco
 [x] 11. Eliminar dimensiones fijas y habilitar autosize total en gráficas y contenedores
 [x] 12. Cambiar checkboxes a la izquierda del texto en el selector de profundidades
+[x] 13. Alinear radios de banda de referencia a la izquierda del texto en pestañas de deconvolution

@@ -10,3 +10,4 @@
 [x] 15. Ajustar anchura del cuadro de selección de profundidades al 100%
 [x] 16. Reducir anchura del cuadro de selección de profundidades al 50% y centrarlo en el contenedor
 [x] 17. Forzar anchura del 50% y centrado en todos los contenedores de profundidad mediante estilos inline para evitar conflictos
+[x] 18. Ajustar .depth-selector al 100% de su contenedor padre para encuadre minucioso

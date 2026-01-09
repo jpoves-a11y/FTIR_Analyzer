@@ -616,10 +616,14 @@
         #oxidationDepthsList,
         #transDepthsList,
         #crystallinityDepthsList,
+        #tviDepthsList,
         #depthColumns {
             width: 60% !important;
+            max-width: 60% !important;
             margin: 0 auto !important;
             display: block !important;
+            float: none !important;
+            clear: both !important;
         }
 
         .form-check-container {
@@ -2129,7 +2133,7 @@
                                                         </button>
                                                     </div>
                                                 </div>
-                                                <div class="depths-checklist" id="oxidationDepthsList" style="max-height: 250px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 0.375rem; padding: 0.75rem; background: white; width: 100%;">
+                                                <div class="depths-checklist" id="oxidationDepthsList" style="max-height: 250px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 0.375rem; padding: 0.75rem; background: white; width: 60% !important; margin: 0 auto !important;">
                                                     <p class="text-muted small mb-0">Load data to see depths</p>
                                                 </div>
                                             </div>
@@ -2299,7 +2303,7 @@
                                                         </button>
                                                     </div>
                                                 </div>
-                                                <div class="depths-checklist" id="crystallinityDepthsList" style="max-height: 250px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 0.375rem; padding: 0.75rem; background: white; width: 100%;">
+                                                <div class="depths-checklist" id="crystallinityDepthsList" style="max-height: 250px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 0.375rem; padding: 0.75rem; background: white; width: 60% !important; margin: 0 auto !important;">
                                                     <p class="text-muted small mb-0">Load data to see depths</p>
                                                 </div>
                                             </div>

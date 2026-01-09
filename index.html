@@ -763,7 +763,11 @@
             cursor: pointer;
             user-select: none;
             flex-grow: 1;
-            padding-left: 0.5rem;
+            padding-left: 1rem;
+        }
+
+        .depth-color-indicator {
+            margin-left: 1rem;
         }
 
         .form-check:last-child {
@@ -9287,8 +9291,8 @@
             console.log(`Found ${checkboxes.length} checked checkboxes for ${analysisType}`);
             
             if (checkboxes.length === 0) {
-                console.log(`No checkboxes selected for ${analysisType}, returning all available depths`);
-                return Object.keys(window.AppState.spectraData || {});
+                console.log(`No checkboxes selected for ${analysisType}, returning empty array`);
+                return [];
             }
             
             const selectedDepths = Array.from(checkboxes).map(cb => cb.value);
@@ -9375,7 +9379,7 @@
                     
                     // Mostrar color asociado
                     const colorIndicator = document.createElement('span');
-                    colorIndicator.className = 'depth-color-indicator ms-2';
+                    colorIndicator.className = 'depth-color-indicator';
                     const color = generateDepthColor(index, depths.length);
                     colorIndicator.style.cssText = `
                         display: inline-block;

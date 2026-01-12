@@ -9180,22 +9180,21 @@
             const spectraData = window.AppState.spectraData;
             const results = window.AppState.analysisResults[analysisType];
             const parameters = getAnalysisParameters(analysisType);
+            const maskedDepths = window.AppState.maskedDepths || new Set();
             
             if (!spectraData || !results || !parameters) return;
             
             const traces = [];
             const { interestPeak } = parameters;
             
-            // Obtener profundidades seleccionadas
-            const selectedDepths = getSelectedDepths(analysisType);
+            // Obtener profundidades seleccionadas, filtrando las enmascaradas
+            const selectedDepths = getSelectedDepths(analysisType).filter(d => !maskedDepths.has(d));
             console.log(`Interest plot - Selected depths for ${analysisType}:`, selectedDepths);
-            console.log(`Interest plot - Available spectra:`, Object.keys(spectraData));
             
             // Añadir trazas de espectros en el rango de interés (solo para profundidades seleccionadas)
             Object.entries(spectraData).forEach(([label, data], index) => {
-                // Solo mostrar si la profundidad está seleccionada
-                if (!selectedDepths.includes(label)) {
-                    console.log(`Skipping ${label} - not in selected depths`);
+                // Solo mostrar si la profundidad está seleccionada y NO enmascarada
+                if (!selectedDepths.includes(label) || maskedDepths.has(label)) {
                     return;
                 }
                 

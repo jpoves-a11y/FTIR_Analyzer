@@ -4571,6 +4571,26 @@
                             header: 1,
                             defval: null
                         });
+
+                        // Logic for wavenumber/frequency and XXXum headers
+                        if (jsonData.length > 0) {
+                            const headers = jsonData[0];
+                            if (headers && headers.length > 0) {
+                                const firstHeader = String(headers[0]).toLowerCase();
+                                if (firstHeader.includes('wavenumber') || firstHeader.includes('frequency')) {
+                                    console.log('Detected Excel with special headers mapping');
+                                    // Map headers to identify depths
+                                    for (let i = 1; i < headers.length; i++) {
+                                        const header = String(headers[i]);
+                                        const depthMatch = header.match(/(\d+)um/i);
+                                        if (depthMatch) {
+                                            console.log(`Column ${i} identified as depth: ${depthMatch[1]}μm`);
+                                            // The rest of the processing logic will use these headers as labels
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         
                         console.log('Excel data loaded:', jsonData.length, 'rows');
                         resolve(jsonData);
@@ -16489,7 +16509,14 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
             const lines = csvText.trim().split('\n');
             if (lines.length < 2) throw new Error('File has no data');
             
-            const headers = lines[0].split(',').map(h => h.trim());
+            const rawHeaders = lines[0].split(',').map(h => h.trim());
+            const headers = [...rawHeaders]; // Copy to keep original if needed
+            
+            // Special Excel-derived mapping (when passed through sheet_to_csv)
+            // or direct CSV with these headers
+            const firstHeader = headers[0].toLowerCase();
+            const isExcelMapping = firstHeader.includes('wavenumber') || firstHeader.includes('frequency');
+            
             const wavenumberIdx = headers.findIndex(h => /wavenumber|cm-1|cm⁻¹|wavelength/i.test(h));
             
             if (wavenumberIdx === -1) throw new Error('Could not find wavenumber column');
@@ -16501,14 +16528,26 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                 if (i === wavenumberIdx) continue;
                 const header = headers[i];
                 if (header && header.trim()) {
-                    depthColumns.push({ index: i, name: header.trim() });
+                    let label = header.trim();
+                    let depth = null;
+                    
+                    if (isExcelMapping) {
+                        const depthMatch = label.match(/(\d+)um/i);
+                        if (depthMatch) {
+                            depth = parseInt(depthMatch[1]);
+                            label = `${depth}μm`; // Normalize label to XXXμm
+                        }
+                    }
+                    
+                    depthColumns.push({ index: i, name: label, depth: depth });
                 }
             }
             
             depthColumns.forEach(col => {
                 spectraData[col.name] = {
                     wavenumber: [],
-                    transmittance: []
+                    transmittance: [],
+                    depth: col.depth
                 };
             });
             

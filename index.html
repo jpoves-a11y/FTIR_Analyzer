@@ -8517,15 +8517,16 @@
                 return;
             }
             
-            console.log(`Starting ${analysisType} analysis with ${Object.keys(window.AppState.spectraData).length} spectra`);
-            console.log('Available spectra:', Object.keys(window.AppState.spectraData));
+            const spectraData = window.AppState.spectraData;
+            const maskedDepths = window.AppState.maskedDepths || new Set();
+            const depthsToProcess = Object.entries(spectraData).filter(([label]) => !maskedDepths.has(label));
             
-            // El análisis completo automático maneja el offset, no requerirlo aquí
+            console.log(`Starting ${analysisType} analysis with ${depthsToProcess.length} spectra (after masking)`);
             
             showLoading(`Performing automatic analysis of ${analysisType}...`);
             
             // Verificar si ya hay correcciones aplicadas
-            const hasBaselineCorrections = Object.values(window.AppState.spectraData).some(data => 
+            const hasBaselineCorrections = depthsToProcess.some(([_, data]) => 
                 data.originalTransmittance && data.originalTransmittance !== data.transmittance
             );
             
@@ -8535,10 +8536,9 @@
             
             try {
                 const results = {};
-                const spectraData = window.AppState.spectraData;
                 const parameters = getAnalysisParameters(analysisType);
                 
-                Object.entries(spectraData).forEach(([label, data]) => {
+                depthsToProcess.forEach(([label, data]) => {
                     try {
                         console.log(`Processing spectrum: ${label}`);
                         console.log('Data check:', {
@@ -10333,12 +10333,16 @@
                 tvi: []
             };
             
-            // Obtener todas las profundidades únicas
+            const maskedDepths = window.AppState.maskedDepths || new Set();
+            
+            // Obtener todas las profundidades únicas, excluyendo las enmascaradas
             const allDepths = new Set();
             analysisTypes.forEach(type => {
                 Object.keys(window.AppState.analysisResults[type]).forEach(label => {
-                    const depth = parseFloat(label.replace('μm', ''));
-                    allDepths.add(depth);
+                    if (!maskedDepths.has(label)) {
+                        const depth = parseFloat(label.replace('μm', ''));
+                        allDepths.add(depth);
+                    }
                 });
             });
             
@@ -14499,15 +14503,19 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                 
                 // Get all available depths
                 const spectraData = window.AppState.spectraData;
+                const maskedDepths = window.AppState.maskedDepths || new Set();
+                
                 if (!spectraData || Object.keys(spectraData).length === 0) {
                     throw new Error('No spectra data available. Please load data first.');
                 }
                 
-                const depths = Object.keys(spectraData).sort((a, b) => {
-                    const numA = parseFloat(a.replace(/[^\d.]/g, ''));
-                    const numB = parseFloat(b.replace(/[^\d.]/g, ''));
-                    return numA - numB;
-                });
+                const depths = Object.keys(spectraData)
+                    .filter(d => !maskedDepths.has(d))
+                    .sort((a, b) => {
+                        const numA = parseFloat(a.replace(/[^\d.]/g, ''));
+                        const numB = parseFloat(b.replace(/[^\d.]/g, ''));
+                        return numA - numB;
+                    });
                 
                 // CRITICAL: Ensure depth selector is populated before trying to set values
                 // This fixes potential issues when running directly without visiting individual deconvolution tab
@@ -15417,16 +15425,20 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                 progressText.textContent = 'Initializing multi-depth analysis...';
                 
                 const spectraData = window.AppState.spectraData;
+                const maskedDepths = window.AppState.maskedDepths || new Set();
+                
                 if (!spectraData || Object.keys(spectraData).length === 0) {
                     throw new Error('No spectra data loaded. Please load data first.');
                 }
                 
-                // Get all depths sorted numerically
-                const depths = Object.keys(spectraData).sort((a, b) => {
-                    const numA = parseFloat(a.replace(/[^\d.]/g, ''));
-                    const numB = parseFloat(b.replace(/[^\d.]/g, ''));
-                    return numA - numB;
-                });
+                // Get all depths sorted numerically, filtering out masked ones
+                const depths = Object.keys(spectraData)
+                    .filter(d => !maskedDepths.has(d))
+                    .sort((a, b) => {
+                        const numA = parseFloat(a.replace(/[^\d.]/g, ''));
+                        const numB = parseFloat(b.replace(/[^\d.]/g, ''));
+                        return numA - numB;
+                    });
                 
                 const totalDepths = depths.length;
                 

@@ -12,3 +12,4 @@
 [x] 17. Forzar anchura del 50% y centrado en todos los contenedores de profundidad mediante estilos inline para evitar conflictos
 [x] 18. Ajustar .depth-selector al 100% de su contenedor padre para encuadre minucioso
 [x] 19. Implementar mapeo de encabezados Excel (wavenumber/frequency y XXXum)
+[x] 20. Implementar enmascaramiento de profundidades interactivo en Spectra Overview (UI en inglés)

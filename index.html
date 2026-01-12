@@ -2241,12 +2241,27 @@
                                                 <button type="button" class="btn btn-outline-secondary btn-sm" onclick="selectNoneDepths('oxidation')">None</button>
                                                 <button type="button" class="btn btn-outline-info btn-sm" onclick="selectEveryNDepths('oxidation', 5)">5th</button>
                                             </div>
-                                            <div class="depths-checklist" id="oxidationDepthsList">
-                                                <p class="text-muted small mb-0">Load data to see depths</p>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Length In Vivo for normalization -->
+                                            <div id="oxidationDepthsList" class="depths-checklist mb-3">
+                                <!-- Dynamic content -->
+                            </div>
+                            
+                            <div class="mt-4 p-3 bg-light border rounded shadow-sm">
+                                <h6 class="mb-2 d-flex align-items-center">
+                                    <i class="fas fa-eye-slash me-2 text-primary"></i>
+                                    <span>Mask Depths</span>
+                                </h6>
+                                <p class="text-muted small mb-2">Select depths to mask (they will be ignored in all analysis and plots):</p>
+                                <div id="maskingDepthsList" class="depths-checklist mb-2" style="max-height: 150px; overflow-y: auto;">
+                                    <p class="text-muted small mb-0">Load data to see depths</p>
+                                </div>
+                                <div class="mt-2 text-center">
+                                    <button class="btn btn-xs btn-outline-secondary w-100" onclick="clearMasking()" style="font-size: 0.7rem;">
+                                        <i class="fas fa-redo-alt me-1"></i>Clear All Masks
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                                         <div class="mb-4">
                                             <h6><i class="fas fa-clock me-2"></i>Length In Vivo (years)</h6>
                                             <input type="number" class="form-control form-control-sm" 
@@ -4122,6 +4137,7 @@
             rawData: null,
             processedData: null,
             spectraData: {},
+            maskedDepths: new Set(),
             analysisResults: {
                 oxidation: {},
                 crystallinity: {},
@@ -4350,6 +4366,8 @@
             }
             
             showLoading('Loading spectrum data...');
+            // Reset masking on new data load
+            window.AppState.maskedDepths = new Set();
             
             try {
                 let data;
@@ -6790,6 +6808,7 @@
                 rawData: null,
                 processedData: null,
                 spectraData: {},
+                maskedDepths: new Set(),
                 analysisResults: {
                     oxidation: {},
                     crystallinity: {},
@@ -6852,6 +6871,7 @@
         function plotSpectraOverview() {
             const plotElement = document.getElementById('overviewPlot');
             const spectraData = window.AppState.spectraData;
+            const maskedDepths = window.AppState.maskedDepths || new Set();
             
             if (!plotElement || !spectraData || Object.keys(spectraData).length === 0) {
                 return;
@@ -6859,7 +6879,7 @@
             
             const traces = [];
             
-            Object.entries(spectraData).forEach(([label, data]) => {
+            Object.entries(spectraData).filter(([label]) => !maskedDepths.has(label)).forEach(([label, data]) => {
                 traces.push({
                     x: data.frequency,
                     y: data.transmittance,
@@ -8991,8 +9011,12 @@
         function updateAnalysisPlot(analysisType) {
             const spectraData = window.AppState.spectraData;
             const results = window.AppState.analysisResults[analysisType];
+            const maskedDepths = window.AppState.maskedDepths || new Set();
             
             if (!spectraData || !results) return;
+            
+            // Only update if current analysis hasn't been masked away
+            // (The individual plots handle the filtering of traces)
             
             // Actualizar ambos gráficos separados
             updateReferenceIntervalPlot(analysisType);
@@ -9008,22 +9032,21 @@
             const spectraData = window.AppState.spectraData;
             const results = window.AppState.analysisResults[analysisType];
             const parameters = getAnalysisParameters(analysisType);
+            const maskedDepths = window.AppState.maskedDepths || new Set();
             
             if (!spectraData || !results || !parameters) return;
             
             const traces = [];
             const { referencePeak } = parameters;
             
-            // Obtener profundidades seleccionadas
-            const selectedDepths = getSelectedDepths(analysisType);
+            // Obtener profundidades seleccionadas, filtrando las enmascaradas
+            const selectedDepths = getSelectedDepths(analysisType).filter(d => !maskedDepths.has(d));
             console.log(`Reference plot - Selected depths for ${analysisType}:`, selectedDepths);
-            console.log(`Reference plot - Available spectra:`, Object.keys(spectraData));
             
             // Añadir trazas de espectros en el rango de referencia (solo para profundidades seleccionadas)
             Object.entries(spectraData).forEach(([label, data], index) => {
-                // Solo mostrar si la profundidad está seleccionada
-                if (!selectedDepths.includes(label)) {
-                    console.log(`Skipping ${label} - not in selected depths`);
+                // Solo mostrar si la profundidad está seleccionada y NO enmascarada
+                if (!selectedDepths.includes(label) || maskedDepths.has(label)) {
                     return;
                 }
                 
@@ -9301,24 +9324,21 @@
         
         function getSelectedDepths(analysisType) {
             const depthsList = document.getElementById(`${analysisType}DepthsList`);
-            console.log(`Looking for depths list: ${analysisType}DepthsList`, depthsList);
+            const maskedDepths = window.AppState.maskedDepths || new Set();
             
             if (!depthsList) {
-                console.log(`No depths list found for ${analysisType}, returning all available depths`);
-                return Object.keys(window.AppState.spectraData || {});
+                return Object.keys(window.AppState.spectraData || {}).filter(d => !maskedDepths.has(d));
             }
             
             const checkboxes = depthsList.querySelectorAll('input[type="checkbox"]:checked');
-            console.log(`Found ${checkboxes.length} checked checkboxes for ${analysisType}`);
             
             if (checkboxes.length === 0) {
-                console.log(`No checkboxes selected for ${analysisType}, returning empty array`);
                 return [];
             }
             
-            const selectedDepths = Array.from(checkboxes).map(cb => cb.value);
-            console.log(`Selected depths for ${analysisType}:`, selectedDepths);
-            return selectedDepths;
+            return Array.from(checkboxes)
+                .map(cb => cb.value)
+                .filter(d => !maskedDepths.has(d));
         }
         
         function selectAllDepths(analysisType) {
@@ -9359,25 +9379,50 @@
         function populateDepthSelectors() {
             if (!window.AppState.spectraData) return;
             
-            const analysisTypes = ['oxidation', 'crystallinity', 'tvi', 'vitaminE'];
-            const depths = Object.keys(window.AppState.spectraData);
+            const spectraData = window.AppState.spectraData;
+            const maskedDepths = window.AppState.maskedDepths || new Set();
             
-            console.log('Populating depth selectors...', { 
-                spectraData: window.AppState.spectraData, 
-                depthCount: depths.length,
-                depths: depths
+            // Filter out masked depths for analysis selectors
+            const depths = Object.keys(spectraData);
+            const availableDepths = depths.filter(d => !maskedDepths.has(d)).sort((a, b) => {
+                const numA = parseFloat(a.replace(/[^\d.]/g, ''));
+                const numB = parseFloat(b.replace(/[^\d.]/g, ''));
+                return numA - numB;
             });
+
+            // Update Masking List in Overview
+            const maskingList = document.getElementById('maskingDepthsList');
+            if (maskingList) {
+                maskingList.innerHTML = '';
+                depths.sort((a, b) => {
+                    const numA = parseFloat(a.replace(/[^\d.]/g, ''));
+                    const numB = parseFloat(b.replace(/[^\d.]/g, ''));
+                    return numA - numB;
+                }).forEach(depth => {
+                    const div = document.createElement('div');
+                    div.className = 'form-check form-check-sm mb-1';
+                    const isMasked = maskedDepths.has(depth);
+                    div.innerHTML = `
+                        <input class="form-check-input" type="checkbox" value="${depth}" id="mask_${depth.replace(/\s+/g, '_')}" ${isMasked ? 'checked' : ''} onchange="toggleMask('${depth}')">
+                        <label class="form-check-label small" for="mask_${depth.replace(/\s+/g, '_')}">
+                            ${depth}
+                        </label>
+                    `;
+                    maskingList.appendChild(div);
+                });
+            }
+            
+            const analysisTypes = ['oxidation', 'crystallinity', 'tvi', 'vitaminE'];
             
             analysisTypes.forEach(analysisType => {
                 const depthsList = document.getElementById(`${analysisType}DepthsList`);
-                console.log(`Populating ${analysisType} depth selector:`, depthsList);
                 if (!depthsList) return;
                 
                 // Limpiar lista actual
                 depthsList.innerHTML = '';
                 
-                // Añadir checkboxes para cada profundidad
-                depths.forEach((depth, index) => {
+                // Añadir checkboxes para cada profundidad disponible (no enmascarada)
+                availableDepths.forEach((depth, index) => {
                     const checkboxDiv = document.createElement('div');
                     checkboxDiv.className = 'form-check form-check-sm mb-1 d-flex align-items-center';
                     
@@ -9401,7 +9446,7 @@
                     // Mostrar color asociado
                     const colorIndicator = document.createElement('span');
                     colorIndicator.className = 'depth-color-indicator';
-                    const color = generateDepthColor(index, depths.length);
+                    const color = generateDepthColor(index, availableDepths.length);
                     colorIndicator.style.cssText = `
                         display: inline-block;
                         width: 12px;
@@ -9420,9 +9465,30 @@
                 // Añadir información del total
                 const infoDiv = document.createElement('div');
                 infoDiv.className = 'mt-2 text-muted small';
-                infoDiv.innerHTML = `<i class="fas fa-info-circle"></i> Total: ${depths.length} depths available`;
+                infoDiv.innerHTML = `<i class="fas fa-info-circle"></i> Total: ${availableDepths.length} depths available`;
                 depthsList.appendChild(infoDiv);
             });
+            
+            // Also update deconvolution selector if it exists
+            populateDepthSelector();
+        }
+
+        function toggleMask(depth) {
+            if (!window.AppState.maskedDepths) window.AppState.maskedDepths = new Set();
+            if (window.AppState.maskedDepths.has(depth)) {
+                window.AppState.maskedDepths.delete(depth);
+            } else {
+                window.AppState.maskedDepths.add(depth);
+            }
+            // Repopulate selectors and refresh plots
+            populateDepthSelectors();
+            showSpectrumData(); // Refresh overview plot
+        }
+
+        function clearMasking() {
+            if (window.AppState.maskedDepths) window.AppState.maskedDepths.clear();
+            populateDepthSelectors();
+            showSpectrumData();
         }
 
         // Función para aplicar línea base automática solo en intervalos definidos por el usuario
@@ -12574,6 +12640,7 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
             if (!depthSelect) return; // Element might not exist yet
             
             const spectraData = window.AppState.spectraData;
+            const maskedDepths = window.AppState.maskedDepths || new Set();
             
             // Clear existing options
             depthSelect.innerHTML = '<option value="">Choose depth to analyze...</option>';
@@ -12582,8 +12649,8 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                 return;
             }
             
-            // Add options for each available depth
-            const depths = Object.keys(spectraData).sort((a, b) => {
+            // Add options for each available depth, filtering out masked ones
+            const depths = Object.keys(spectraData).filter(d => !maskedDepths.has(d)).sort((a, b) => {
                 // Sort by numeric value if possible
                 const numA = parseFloat(a.replace(/[^\d.]/g, ''));
                 const numB = parseFloat(b.replace(/[^\d.]/g, ''));
@@ -15614,6 +15681,8 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
         
         function updateSynovialSpectraPlots() {
             const spectraData = window.AppState.spectraData;
+            const maskedDepths = window.AppState.maskedDepths || new Set();
+            
             if (!spectraData || Object.keys(spectraData).length === 0) return;
             
             // Get band parameters
@@ -15626,7 +15695,7 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
             const lactonePlotDiv = document.getElementById('synovialLactonePlot');
             if (lactonePlotDiv) {
                 const traces = [];
-                const depthLabels = Object.keys(spectraData);
+                const depthLabels = Object.keys(spectraData).filter(d => !maskedDepths.has(d));
                 const totalDepths = depthLabels.length;
                 
                 depthLabels.forEach((label, index) => {

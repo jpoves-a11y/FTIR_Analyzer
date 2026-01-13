@@ -873,8 +873,10 @@
             font-size: var(--font-size-lg);
         }
 
-        .modal-body {
-            padding: 1.5rem;
+        .table-responsive table th, 
+        .table-responsive table td {
+            text-align: center;
+            vertical-align: middle;
         }
 
         .modal-footer {
@@ -9723,13 +9725,13 @@
                 <div class="table-responsive">
                     <table class="table table-sm table-striped">
                         <thead>
-                            <tr>
+                            <tr class="text-center">
                                 <th>Depth</th>
                                 <th>${indexColumnName}</th>
                                 <th>${valuesLabel}</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="text-center">
             `;
             
             Object.entries(results).forEach(([label, result]) => {

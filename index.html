@@ -740,7 +740,7 @@
 
         .form-check {
             margin-bottom: 0.5rem;
-            padding: 0.25rem 0.5rem;
+            padding: 0.25rem 0.1rem; /* Reducido de 0.5rem a 0.1rem para acercar al margen izquierdo */
             position: relative;
             display: flex;
             align-items: center;
@@ -756,6 +756,7 @@
             width: 1.2rem;
             height: 1.2rem;
             cursor: pointer;
+            flex-shrink: 0; /* Asegurar que no se encoja */
         }
 
         .form-check-label {
@@ -763,7 +764,8 @@
             cursor: pointer;
             user-select: none;
             flex-grow: 1;
-            padding-left: 1rem;
+            padding-left: 0.75rem; /* Espacio entre checkbox y texto */
+            white-space: nowrap; /* Evitar que el texto se parta si es corto */
         }
 
         .depth-color-indicator {

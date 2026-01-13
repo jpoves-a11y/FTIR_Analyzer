@@ -733,7 +733,7 @@
             overflow-y: auto;
             border: 1px solid var(--border-color);
             border-radius: 0.5rem;
-            padding: 0.75rem 0.75rem 0.75rem 0 !important; /* Eliminado padding izquierdo por completo */
+            padding: 0.75rem 0.75rem 0.75rem 0.25rem; /* Reducido padding izquierdo a 0.25rem */
             background-color: #f8f9fa;
             box-sizing: border-box;
         }
@@ -741,12 +741,12 @@
         .form-check {
             margin-bottom: 0.5rem;
             padding: 0.25rem 0 !important;
-            margin-left: -1.25rem !important; /* Desplazamiento masivo hacia la izquierda */
+            margin-left: -0.5rem !important; /* Mover hacia la izquierda agresivamente */
             position: relative;
             display: flex;
             align-items: center;
             justify-content: flex-start;
-            width: calc(100% + 1.25rem);
+            width: calc(100% + 0.5rem);
             box-sizing: border-box;
         }
 

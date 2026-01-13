@@ -740,7 +740,7 @@
 
         .form-check {
             margin-bottom: 0.5rem;
-            padding: 0.25rem 0.1rem; /* Reducido de 0.5rem a 0.1rem para acercar al margen izquierdo */
+            padding: 0.25rem 0 !important; /* Forzar padding cero a la izquierda */
             position: relative;
             display: flex;
             align-items: center;
@@ -751,12 +751,13 @@
 
         .form-check-input {
             order: 1;
-            position: static;
-            margin: 0;
+            position: static !important; /* Anular posicionamiento absoluto de Bootstrap */
+            margin: 0 !important; /* Quitar cualquier margen predeterminado */
             width: 1.2rem;
             height: 1.2rem;
             cursor: pointer;
-            flex-shrink: 0; /* Asegurar que no se encoja */
+            flex-shrink: 0;
+            -webkit-appearance: checkbox !important; /* Asegurar apariencia de checkbox */
         }
 
         .form-check-label {
@@ -764,8 +765,9 @@
             cursor: pointer;
             user-select: none;
             flex-grow: 1;
-            padding-left: 0.75rem; /* Espacio entre checkbox y texto */
-            white-space: nowrap; /* Evitar que el texto se parta si es corto */
+            padding-left: 10px !important; /* Espacio fijo y claro entre el check y el texto */
+            margin-left: 0 !important;
+            white-space: nowrap;
         }
 
         .depth-color-indicator {

@@ -9341,19 +9341,18 @@
             const depthsList = document.getElementById(`${analysisType}DepthsList`);
             const maskedDepths = window.AppState.maskedDepths || new Set();
             
-            if (!depthsList) {
-                return Object.keys(window.AppState.spectraData || {}).filter(d => !maskedDepths.has(d));
+            // Si hay una lista local de checkboxes en el tab, usarla
+            if (depthsList) {
+                const checkboxes = depthsList.querySelectorAll('input[type="checkbox"]:checked');
+                if (checkboxes.length > 0) {
+                    return Array.from(checkboxes)
+                        .map(cb => cb.value)
+                        .filter(d => !maskedDepths.has(d));
+                }
             }
             
-            const checkboxes = depthsList.querySelectorAll('input[type="checkbox"]:checked');
-            
-            if (checkboxes.length === 0) {
-                return [];
-            }
-            
-            return Array.from(checkboxes)
-                .map(cb => cb.value)
-                .filter(d => !maskedDepths.has(d));
+            // Si no hay lista local o no hay nada marcado, devolver todos los espectros NO enmascarados
+            return Object.keys(window.AppState.spectraData || {}).filter(d => !maskedDepths.has(d));
         }
         
         function selectAllDepths(analysisType) {
@@ -9498,12 +9497,14 @@
             // Repopulate selectors and refresh plots
             populateDepthSelectors();
             showSpectrumData(); // Refresh overview plot
+            updateAllAnalysisPlots(); // Refresh all interval plots
         }
 
         function clearMasking() {
             if (window.AppState.maskedDepths) window.AppState.maskedDepths.clear();
             populateDepthSelectors();
             showSpectrumData();
+            updateAllAnalysisPlots();
         }
 
         // Función para aplicar línea base automática solo en intervalos definidos por el usuario

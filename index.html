@@ -9417,15 +9417,17 @@
                     const numA = parseFloat(a.replace(/[^\d.]/g, ''));
                     const numB = parseFloat(b.replace(/[^\d.]/g, ''));
                     return numA - numB;
-                }).forEach(depth => {
+                }).forEach((depth, index) => {
                     const div = document.createElement('div');
                     div.className = 'form-check form-check-sm mb-1 d-flex align-items-center';
                     const isMasked = maskedDepths.has(depth);
+                    const color = generateDepthColor(index, depths.length);
                     div.innerHTML = `
                         <input class="form-check-input ms-0 me-2" type="checkbox" value="${depth}" id="mask_${depth.replace(/\s+/g, '_')}" ${isMasked ? 'checked' : ''} onchange="toggleMask('${depth}')">
                         <label class="form-check-label small" for="mask_${depth.replace(/\s+/g, '_')}">
                             ${depth}
                         </label>
+                        <span class="ms-auto" style="display: inline-block; width: 12px; height: 12px; background-color: ${color}; border-radius: 50%; flex-shrink: 0;"></span>
                     `;
                     maskingList.appendChild(div);
                 });
@@ -9455,7 +9457,7 @@
                         <label class="form-check-label small" for="${analysisType}_depth_${index}">
                             ${depth}
                         </label>
-                        <span class="ms-2" style="display: inline-block; width: 12px; height: 12px; background-color: ${color}; border-radius: 50%; flex-shrink: 0;"></span>
+                        <span class="ms-auto" style="display: inline-block; width: 12px; height: 12px; background-color: ${color}; border-radius: 50%; flex-shrink: 0;"></span>
                     `;
                     
                     depthsList.appendChild(div);

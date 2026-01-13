@@ -9414,10 +9414,10 @@
                     return numA - numB;
                 }).forEach(depth => {
                     const div = document.createElement('div');
-                    div.className = 'form-check form-check-sm mb-1';
+                    div.className = 'form-check form-check-sm mb-1 d-flex align-items-center';
                     const isMasked = maskedDepths.has(depth);
                     div.innerHTML = `
-                        <input class="form-check-input" type="checkbox" value="${depth}" id="mask_${depth.replace(/\s+/g, '_')}" ${isMasked ? 'checked' : ''} onchange="toggleMask('${depth}')">
+                        <input class="form-check-input ms-0 me-2" type="checkbox" value="${depth}" id="mask_${depth.replace(/\s+/g, '_')}" ${isMasked ? 'checked' : ''} onchange="toggleMask('${depth}')">
                         <label class="form-check-label small" for="mask_${depth.replace(/\s+/g, '_')}">
                             ${depth}
                         </label>

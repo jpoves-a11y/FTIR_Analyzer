@@ -18,6 +18,14 @@
     
     <!-- CDN Libraries - External dependencies -->
     <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
+    <script>
+        // Configure Plotly for responsive charts
+        Plotly.setPlotConfig({
+            responsive: true,
+            displayModeBar: true,
+            displaylogo: false
+        });
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
@@ -194,41 +202,198 @@
 
         /* Plot Container Styles */
         .plot-container {
-            min-height: 350px;
-            height: auto;
             background-color: white;
-            border-radius: var(--border-radius-sm);
-            border: 1px solid var(--border-color);
-            margin-bottom: 1rem;
+            border-radius: 0;
+            border: none;
+            margin: 0 !important;
             position: relative;
-            overflow: hidden;
-            padding: 0;
+            overflow: visible !important;
+            padding: 0 !important;
             width: 100%;
             box-sizing: border-box;
             display: block;
+            flex-shrink: 0;
+            height: 100%;
+        }
+        
+        .plot-container[style*="height"] {
+            min-height: unset !important;
+            height: 100%;
         }
 
         .analysis-plot-container .plot-container {
-            overflow: hidden;
-            padding: 0;
-            border: none;
-            box-shadow: none;
-            margin: 0;
-            height: 400px !important;
+            overflow: visible !important;
+            padding: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+            margin: 0 !important;
+            height: 100%;
             width: 100% !important;
             display: flex;
             flex: 1;
+            min-height: 400px;
         }
 
         .analysis-plot-container .plot-container .js-plotly-plot {
             height: 100% !important;
             width: 100% !important;
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0 !important;
+            margin: 0 !important;
         }
 
-        /* Asegurar que el contenedor de Plotly no tenga padding interno */
-        .js-plotly-plot .plotly .main-svg {
+        #deconvolutionDerivativesPlot,
+        #deconvolutionMainPlot {
+            display: flex !important;
+            background: transparent !important;
+            border: none !important;
             border-radius: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            flex-shrink: 0 !important;
+            width: 100% !important;
+            overflow: visible !important;
+            flex-direction: column;
+            justify-content: stretch;
+            align-items: stretch;
+        }
+
+        #deconvolutionDerivativesPlot {
+            height: 380px !important;
+            max-height: 380px;
+            min-height: 380px;
+            flex: 0 0 380px;
+        }
+
+        #deconvolutionMainPlot {
+            height: 400px !important;
+            max-height: 400px;
+            min-height: 400px;
+            flex: 0 0 400px;
+        }
+        
+        #deconvolutionDerivativesPlot .js-plotly-plot,
+        #deconvolutionMainPlot .js-plotly-plot {
+            width: 100% !important;
+            height: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            overflow: visible !important;
+            flex: 1 !important;
+        }
+        
+        #deconvolutionDerivativesPlot .plotly,
+        #deconvolutionMainPlot .plotly {
+            width: 100% !important;
+            height: 100% !important;
+            overflow: visible !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        #deconvolutionDerivativesPlot svg,
+        #deconvolutionMainPlot svg {
+            width: 100% !important;
+            height: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* Compact mode bar for deconvolution plots */
+        #deconvolutionDerivativesPlot .modebar,
+        #deconvolutionMainPlot .modebar {
+            position: absolute !important;
+            top: 2px !important;
+            right: 2px !important;
+            background-color: rgba(255, 255, 255, 0.8) !important;
+            height: 24px !important;
+            border-radius: 2px !important;
+            padding: 0 2px !important;
+            z-index: 1000;
+        }
+
+        #deconvolutionDerivativesPlot .modebar-btn,
+        #deconvolutionMainPlot .modebar-btn {
+            height: 24px !important;
+            width: 24px !important;
+            padding: 0 !important;
+            margin: 0 2px !important;
+        }
+
+        #deconvolutionDerivativesPlot .modebar-btn svg,
+        #deconvolutionMainPlot .modebar-btn svg {
+            height: 16px !important;
+            width: 16px !important;
+        }
+
+        /* Fix deconvolution card body layout - prevent flex from stretching */
+        .card.mb-4 .card-body {
+            display: flex !important;
+            flex-direction: column !important;
+            height: auto !important;
+            align-items: stretch !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            gap: 0 !important;
+        }
+
+        .card.mb-4 .card-body > .row {
+            flex-shrink: 0 !important;
+            height: auto !important;
+            padding: 1rem;
+            margin: 0 !important;
+        }
+
+        .card.mb-4 .card-body > .text-end {
+            flex-shrink: 0 !important;
+            height: auto !important;
+            padding: 0 1rem 1rem 1rem;
+            margin: 0 !important;
+        }
+
+        /* Remove padding from card-body with plot-container */
+        .card-body .plot-container {
+            padding: 0 !important;
+            margin: 0 !important;
+            height: auto !important;
+        }
+
+        /* Overview control buttons with white text */
+        #toggleSpectraBtn,
+        #resetZoomBtn {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            color: white !important;
+        }
+
+        #toggleSpectraBtn i,
+        #resetZoomBtn i {
+            color: white !important;
+        }
+
+        #toggleSpectraBtn:hover,
+        #resetZoomBtn:hover {
+            background-color: var(--secondary-color) !important;
+            border-color: var(--secondary-color) !important;
+        }
+
+        /* Button active states with white text */
+        .btn-outline-primary.active,
+        .btn-outline-primary:active,
+        .btn-outline-secondary.active,
+        .btn-outline-secondary:active {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            color: white !important;
+        }
+
+        .btn-outline-primary.active i,
+        .btn-outline-primary:active i,
+        .btn-outline-secondary.active i,
+        .btn-outline-secondary:active i {
+            color: white !important;
         }
 
         /* Form Styles */
@@ -535,6 +700,17 @@
             width: 100%;
             margin: 0;
             padding: 0;
+        }
+
+        .analysis-panel > .row {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .analysis-panel .row > .col-analysis-content,
+        .analysis-panel .row > .col-analysis-sidebar {
+            display: flex;
+            flex-direction: column;
         }
 
         .analysis-controls {
@@ -1568,8 +1744,11 @@
         /* Enhanced Plot Container Responsiveness */
         .plot-container {
             width: 100% !important;
-            min-height: 400px;
-            overflow-x: auto;
+            height: 100% !important;
+            overflow: visible !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
         }
         
         /* Overview Plot Specific Styling */
@@ -1606,28 +1785,37 @@
         /* Analysis Plot Containers */
         .analysis-plot-container {
             width: 100%;
-            padding: 1rem;
+            padding: 0 !important;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
+            height: 100%;
+            margin: 0 !important;
         }
         
         .analysis-plot-container .card-body {
-            padding: 0;
+            padding: 0 !important;
             flex: 1;
             display: flex;
+            flex-direction: column;
+            height: 100%;
+            margin: 0 !important;
         }
         
         /* Ensure all Plotly plots are responsive */
         .js-plotly-plot {
             width: 100% !important;
             height: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
         }
 
         .plot-container {
             width: 100%;
             height: 100%;
             box-sizing: border-box;
+            padding: 0 !important;
+            margin: 0 !important;
         }
 
         .quick-action-card::before {
@@ -1943,6 +2131,11 @@
                                             title="Import multiple .dpt files, one for each depth measurement" data-bs-toggle-extra="tooltip" data-bs-placement="top">
                                         <i class="fas fa-files me-2"></i>Multiple Depth Files
                                     </button>
+                                    <button class="nav-link" id="batch-analysis-tab" data-bs-toggle="pill" 
+                                            data-bs-target="#batch-analysis" type="button" role="tab"
+                                            title="Batch analysis: Load multiple spectra files, auto-analyze with selectable methods, and export consolidated results to Excel" data-bs-toggle-extra="tooltip" data-bs-placement="top">
+                                        <i class="fas fa-layer-group me-2"></i>Multi-File Batch Analysis
+                                    </button>
                                 </div>
                                 <a href="/public/SoftwareUserManual.pdf" target="_blank" class="btn btn-outline-primary" title="Download user manual PDF" style="border-radius: 25px; padding: 0.6rem 1.2rem; font-weight: 600; font-size: 1.05rem;">
                                     <i class="fas fa-book-open me-2" style="font-size: 1.2rem;"></i>User Manual
@@ -2046,6 +2239,106 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Multi-File Batch Analysis Mode -->
+                            <div class="tab-pane fade" id="batch-analysis" role="tabpanel">
+                                <div class="row mb-4">
+                                    <div class="col-md-9">
+                                        <label class="form-label">
+                                            <i class="fas fa-layer-group me-2"></i>Select Multiple FTIR Spectra Files
+                                        </label>
+                                        <div class="custom-file-input-wrapper">
+                                            <input type="file" id="batchFileInput" 
+                                                   accept=".xlsx,.dpt,.spc,.txt,.csv,.0" multiple>
+                                            <div class="custom-file-label" id="batchFileInputLabel">
+                                                <span class="browse-btn">
+                                                    <i class="fas fa-folder-open"></i>
+                                                    Choose Multiple Files
+                                                </span>
+                                                <span class="file-name" id="batchFileInputName">No files chosen</span>
+                                            </div>
+                                        </div>
+                                        <div class="form-text">
+                                            Select multiple .xlsx, .dpt, .csv, or other spectrum files for batch processing
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Batch Analysis Options -->
+                                <div class="row mb-4 p-3 bg-light rounded">
+                                    <div class="col-md-6">
+                                        <label class="form-label"><i class="fas fa-fire me-1"></i>Oxidation Method</label>
+                                        <select class="form-select" id="batchOxidationMethod">
+                                            <option value="area" selected>OI Area-Based (ASTM F2102)</option>
+                                            <option value="height">KOI Height-Based</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label"><i class="fas fa-gem me-1"></i>Crystallinity Method</label>
+                                        <select class="form-select" id="batchCrystallinityMethod">
+                                            <option value="area" selected>CI Area-Based</option>
+                                            <option value="height">CI Height-Based</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- File List Preview with Editable Names -->
+                                <div class="row mt-4" id="batchFilePreview" style="display: none;">
+                                    <div class="col-12">
+                                        <h6><i class="fas fa-list me-2"></i>Files to Analyze (Editable Sample Names)</h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-sm">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th style="width: 5%">#</th>
+                                                        <th style="width: 40%">Original Filename</th>
+                                                        <th style="width: 40%">Sample Name (Editable)</th>
+                                                        <th style="width: 15%">Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="batchFileTable">
+                                                    <!-- Dynamic file list -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Progress Bar -->
+                                <div class="row mt-4" id="batchProgressSection" style="display: none;">
+                                    <div class="col-12">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h6 class="mb-0"><i class="fas fa-spinner fa-spin me-2"></i>Analysis Progress</h6>
+                                            <span id="batchProgressText" class="badge bg-primary">0/0</span>
+                                        </div>
+                                        <div class="progress" style="height: 25px;">
+                                            <div class="progress-bar progress-bar-striped progress-bar-animated" id="batchProgressBar" 
+                                                 role="progressbar" style="width: 0%">
+                                                <span id="batchProgressPercent">0%</span>
+                                            </div>
+                                        </div>
+                                        <div class="text-muted small mt-2">
+                                            <span id="batchCurrentFile">Waiting to start...</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Download Results Section -->
+                                <div class="row mt-4" id="batchDownloadSection" style="display: none;">
+                                    <div class="col-12">
+                                        <div class="alert alert-success d-flex align-items-center">
+                                            <i class="fas fa-check-circle me-3" style="font-size: 1.5rem;"></i>
+                                            <div class="flex-grow-1">
+                                                <strong>Batch Analysis Complete!</strong>
+                                                <p class="mb-0 text-muted small">Click the button below to download the consolidated results as Excel</p>
+                                            </div>
+                                            <button class="btn btn-success" id="downloadBatchExcelBtn" style="white-space: nowrap;">
+                                                <i class="fas fa-download me-2"></i>Download Excel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="row mt-3">
@@ -2054,6 +2347,11 @@
                                         data-bs-toggle="tooltip" data-bs-placement="top" 
                                         title="Load and process the selected FTIR data file(s)">
                                     <i class="fas fa-play me-2"></i>Load Data
+                                </button>
+                                <button class="btn btn-success ms-2" id="startBatchAnalysisBtn" disabled style="display: none;"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" 
+                                        title="Start batch analysis with selected options">
+                                    <i class="fas fa-play me-2"></i>Start Batch Analysis
                                 </button>
                                 <button class="btn btn-secondary ms-2" id="clearDataBtn" disabled
                                         data-bs-toggle="tooltip" data-bs-placement="top" 
@@ -2302,9 +2600,19 @@
                                             <div class="col-12">
                                                 <div class="card" style="border: 2px solid #43e97b;">
                                                     <div class="card-header" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;">
-                                                        <h6 class="mb-0">
-                                                            <i class="fas fa-anchor me-2"></i>Reference Interval
-                                                        </h6>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <h6 class="mb-0">
+                                                                <i class="fas fa-anchor me-2"></i>Reference Interval
+                                                            </h6>
+                                                            <div>
+                                                                <button class="btn btn-sm btn-light" id="toggleOxidationRefViewBtn" style="color: #43e97b;">
+                                                                    <i class="fas fa-layer-group me-1"></i>Toggle View
+                                                                </button>
+                                                                <button class="btn btn-sm btn-light" id="resetOxidationRefZoomBtn" style="color: #38f9d7;">
+                                                                    <i class="fas fa-search-minus me-1"></i>Reset
+                                                                </button>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <div class="card-body p-0">
                                                         <div id="oxidationReferencePlot" style="height: 400px;"></div>
@@ -2318,9 +2626,19 @@
                                             <div class="col-12">
                                                 <div class="card" style="border: 2px solid #f093fb;">
                                                     <div class="card-header" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
-                                                        <h6 class="mb-0">
-                                                            <i class="fas fa-bullseye me-2"></i>Interest Interval
-                                                        </h6>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <h6 class="mb-0">
+                                                                <i class="fas fa-bullseye me-2"></i>Interest Interval
+                                                            </h6>
+                                                            <div>
+                                                                <button class="btn btn-sm btn-light" id="toggleOxidationIntViewBtn" style="color: #f093fb;">
+                                                                    <i class="fas fa-layer-group me-1"></i>Toggle View
+                                                                </button>
+                                                                <button class="btn btn-sm btn-light" id="resetOxidationIntZoomBtn" style="color: #f5576c;">
+                                                                    <i class="fas fa-search-minus me-1"></i>Reset
+                                                                </button>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <div class="card-body p-0">
                                                         <div id="oxidationInterestPlot" style="height: 400px;"></div>
@@ -2479,9 +2797,19 @@
                                             <div class="col-12">
                                                 <div class="card" style="border: 2px solid #43e97b;">
                                                     <div class="card-header" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;">
-                                                        <h6 class="mb-0">
-                                                            <i class="fas fa-anchor me-2"></i>Reference Interval
-                                                        </h6>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <h6 class="mb-0">
+                                                                <i class="fas fa-anchor me-2"></i>Reference Interval
+                                                            </h6>
+                                                            <div>
+                                                                <button class="btn btn-sm btn-light" id="toggleCrystallinityRefViewBtn" style="color: #43e97b;">
+                                                                    <i class="fas fa-layer-group me-1"></i>Toggle View
+                                                                </button>
+                                                                <button class="btn btn-sm btn-light" id="resetCrystallinityRefZoomBtn" style="color: #38f9d7;">
+                                                                    <i class="fas fa-search-minus me-1"></i>Reset
+                                                                </button>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <div class="card-body p-0">
                                                         <div id="crystallinityReferencePlot" style="height: 400px;"></div>
@@ -2495,9 +2823,19 @@
                                             <div class="col-12">
                                                 <div class="card" style="border: 2px solid #f093fb;">
                                                     <div class="card-header" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
-                                                        <h6 class="mb-0">
-                                                            <i class="fas fa-bullseye me-2"></i>Interest Interval
-                                                        </h6>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <h6 class="mb-0">
+                                                                <i class="fas fa-bullseye me-2"></i>Interest Interval
+                                                            </h6>
+                                                            <div>
+                                                                <button class="btn btn-sm btn-light" id="toggleCrystallinityIntViewBtn" style="color: #f093fb;">
+                                                                    <i class="fas fa-layer-group me-1"></i>Toggle View
+                                                                </button>
+                                                                <button class="btn btn-sm btn-light" id="resetCrystallinityIntZoomBtn" style="color: #f5576c;">
+                                                                    <i class="fas fa-search-minus me-1"></i>Reset
+                                                                </button>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <div class="card-body p-0">
                                                         <div id="crystallinityInterestPlot" style="height: 400px;"></div>
@@ -2627,9 +2965,19 @@
                                             <div class="col-12">
                                                 <div class="card" style="border: 2px solid #43e97b;">
                                                     <div class="card-header" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;">
-                                                        <h6 class="mb-0">
-                                                            <i class="fas fa-anchor me-2"></i>Reference Interval
-                                                        </h6>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <h6 class="mb-0">
+                                                                <i class="fas fa-anchor me-2"></i>Reference Interval
+                                                            </h6>
+                                                            <div>
+                                                                <button class="btn btn-sm btn-light" id="toggleTVIRefViewBtn" style="color: #43e97b;">
+                                                                    <i class="fas fa-layer-group me-1"></i>Toggle View
+                                                                </button>
+                                                                <button class="btn btn-sm btn-light" id="resetTVIRefZoomBtn" style="color: #38f9d7;">
+                                                                    <i class="fas fa-search-minus me-1"></i>Reset
+                                                                </button>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <div class="card-body p-0">
                                                         <div id="tviReferencePlot" style="height: 400px;"></div>
@@ -2643,9 +2991,19 @@
                                             <div class="col-12">
                                                 <div class="card" style="border: 2px solid #f093fb;">
                                                     <div class="card-header" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
-                                                        <h6 class="mb-0">
-                                                            <i class="fas fa-bullseye me-2"></i>Interest Interval
-                                                        </h6>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <h6 class="mb-0">
+                                                                <i class="fas fa-bullseye me-2"></i>Interest Interval
+                                                            </h6>
+                                                            <div>
+                                                                <button class="btn btn-sm btn-light" id="toggleTVIIntViewBtn" style="color: #f093fb;">
+                                                                    <i class="fas fa-layer-group me-1"></i>Toggle View
+                                                                </button>
+                                                                <button class="btn btn-sm btn-light" id="resetTVIIntZoomBtn" style="color: #f5576c;">
+                                                                    <i class="fas fa-search-minus me-1"></i>Reset
+                                                                </button>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <div class="card-body p-0">
                                                         <div id="tviInterestPlot" style="height: 400px;"></div>
@@ -2840,6 +3198,12 @@
                                             </div>
                                         </div>
                                         <div class="text-end mb-2">
+                                            <button class="btn btn-sm btn-outline-primary" id="toggleDepthViewBtn">
+                                                <i class="fas fa-layer-group me-1"></i>Toggle View
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-secondary" id="resetDepthZoomBtn">
+                                                <i class="fas fa-search-minus me-1"></i>Reset Zoom
+                                            </button>
                                             <button class="btn btn-sm btn-outline-primary" id="applyDepthAxisBtn">
                                                 <i class="fas fa-check me-1"></i>Apply
                                             </button>
@@ -4277,7 +4641,10 @@
                 baselineCorrected: false
             },
             currentFileName: '',
-            loadedFiles: []
+            loadedFiles: [],
+            batchFiles: [],
+            batchResults: {},
+            batchErrors: {}
         };
 
         // Utility Functions
@@ -4345,8 +4712,42 @@
                 }
                 handleMultiFileSelection(e);
             });
+
+            document.getElementById('batchFileInput').addEventListener('change', function(e) {
+                const fileCount = e.target.files.length;
+                const fileName = fileCount > 0 ? `${fileCount} file${fileCount > 1 ? 's' : ''} selected` : 'No files chosen';
+                const fileNameSpan = document.getElementById('batchFileInputName');
+                fileNameSpan.textContent = fileName;
+                if (fileCount > 0) {
+                    fileNameSpan.classList.add('has-file');
+                } else {
+                    fileNameSpan.classList.remove('has-file');
+                }
+                handleBatchFileSelection(e);
+            });
             
-            document.getElementById('loadDataBtn').addEventListener('click', loadSpectrumData);
+            document.getElementById('loadDataBtn').addEventListener('click', function() {
+                // Check which tab is active
+                const activeTabs = document.querySelectorAll('.nav-link.active');
+                let isActiveBatch = false;
+                for (let tab of activeTabs) {
+                    if (tab.id === 'batch-analysis-tab') {
+                        isActiveBatch = true;
+                        break;
+                    }
+                }
+
+                if (isActiveBatch) {
+                    // For batch analysis, show file preview
+                    const fileInput = document.getElementById('batchFileInput');
+                    if (fileInput && fileInput.files.length > 0) {
+                        updateBatchFilePreview();
+                    }
+                } else {
+                    // Normal single/multi-file loading
+                    loadSpectrumData();
+                }
+            });
             document.getElementById('clearDataBtn').addEventListener('click', clearAllData);
             
             // Add import mode tab listeners
@@ -4356,6 +4757,12 @@
             document.getElementById('multi-files-tab').addEventListener('click', () => {
                 clearFileSelections();
             });
+            const batchTab = document.getElementById('batch-analysis-tab');
+            if (batchTab) {
+                batchTab.addEventListener('click', () => {
+                    clearFileSelections();
+                });
+            }
         }
 
         function handleFileSelection(event) {
@@ -6995,6 +7402,1057 @@
         }
 
         // Visualization Functions
+        // Toggle spectra overlay/individual/3D view
+        let viewMode = 'overlay'; // 'overlay', 'individual', '3d'
+        
+        function toggleSpectraOverlay() {
+            const btn = document.getElementById('toggleSpectraBtn');
+            
+            // Cycle through modes: overlay -> individual -> 3d -> overlay
+            if (viewMode === 'overlay') {
+                viewMode = 'individual';
+                btn.innerHTML = '<i class="fas fa-grip-lines me-1"></i>Individual View';
+                plotIndividualSpectra();
+            } else if (viewMode === 'individual') {
+                viewMode = '3d';
+                btn.innerHTML = '<i class="fas fa-cube me-1"></i>3D View';
+                plot3DSpectra();
+            } else {
+                viewMode = 'overlay';
+                btn.innerHTML = '<i class="fas fa-layer-group me-1"></i>Toggle View';
+                plotSpectraOverview();
+            }
+        }
+        
+        function plot3DSpectra() {
+            const plotElement = document.getElementById('overviewPlot');
+            const spectraData = window.AppState.spectraData;
+            const maskedDepths = window.AppState.maskedDepths || new Set();
+            
+            if (!plotElement || !spectraData || Object.keys(spectraData).length === 0) {
+                return;
+            }
+            
+            const visibleData = Object.entries(spectraData).filter(([label]) => !maskedDepths.has(label));
+            
+            // Extract depth numbers from labels
+            const getDepthNumber = (label) => {
+                const match = label.match(/(\d+\.?\d*)\s*(µm|um|μm)/i);
+                return match ? parseFloat(match[1]) : 0;
+            };
+            
+            // Sort by depth
+            visibleData.sort((a, b) => getDepthNumber(a[0]) - getDepthNumber(b[0]));
+            
+            const traces = [];
+            
+            visibleData.forEach(([label, data]) => {
+                const depth = getDepthNumber(label);
+                
+                traces.push({
+                    x: data.frequency,
+                    y: Array(data.frequency.length).fill(depth),
+                    z: data.transmittance,
+                    type: 'scatter3d',
+                    mode: 'lines',
+                    name: label,
+                    line: {
+                        color: data.color,
+                        width: 3
+                    },
+                    hovertemplate: `
+                        <b>${label}</b><br>
+                        Wavenumber: %{x:.1f} cm⁻¹<br>
+                        Depth: %{y:.1f} µm<br>
+                        Absorbance: %{z:.4f}<br>
+                        <extra></extra>
+                    `
+                });
+            });
+            
+            const layout = {
+                title: {
+                    text: 'FTIR Spectra - 3D Interactive View',
+                    font: { color: '#e0e0e0' }
+                },
+                scene: {
+                    xaxis: {
+                        title: 'Wavenumber (cm⁻¹)',
+                        autorange: 'reversed',
+                        showgrid: true,
+                        gridcolor: '#444444',
+                        backgroundcolor: '#1a1a1a',
+                        titlefont: { color: '#e0e0e0' },
+                        tickfont: { color: '#c0c0c0' }
+                    },
+                    yaxis: {
+                        title: 'Depth (µm)',
+                        showgrid: true,
+                        gridcolor: '#444444',
+                        backgroundcolor: '#1a1a1a',
+                        titlefont: { color: '#e0e0e0' },
+                        tickfont: { color: '#c0c0c0' }
+                    },
+                    zaxis: {
+                        title: 'Absorbance',
+                        showgrid: true,
+                        gridcolor: '#444444',
+                        backgroundcolor: '#1a1a1a',
+                        titlefont: { color: '#e0e0e0' },
+                        tickfont: { color: '#c0c0c0' }
+                    },
+                    bgcolor: '#1a1a1a',
+                    camera: {
+                        eye: { x: 1.5, y: 1.5, z: 1.3 },
+                        center: { x: 0, y: 0, z: 0 },
+                        up: { x: 0, y: 0, z: 1 }
+                    }
+                },
+                showlegend: true,
+                legend: {
+                    orientation: 'v',
+                    x: 0.98,
+                    xanchor: 'right',
+                    y: 1,
+                    yanchor: 'top',
+                    bgcolor: 'rgba(30,30,30,0.95)',
+                    bordercolor: '#444444',
+                    borderwidth: 1,
+                    font: { size: 12, color: '#e0e0e0' }
+                },
+                margin: {
+                    l: 0,
+                    r: 0,
+                    t: 40,
+                    b: 0
+                },
+                paper_bgcolor: '#0d0d0d',
+                plot_bgcolor: '#1a1a1a'
+            };
+            
+            const config = {
+                responsive: true,
+                displayModeBar: true,
+                modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d'],
+                displaylogo: false
+            };
+            
+            Plotly.newPlot(plotElement, traces, layout, config);
+        }
+        
+        function plotIndividualSpectra() {
+            const plotElement = document.getElementById('overviewPlot');
+            const spectraData = window.AppState.spectraData;
+            const maskedDepths = window.AppState.maskedDepths || new Set();
+            
+            if (!plotElement || !spectraData || Object.keys(spectraData).length === 0) {
+                return;
+            }
+            
+            const traces = [];
+            const visibleData = Object.entries(spectraData).filter(([label]) => !maskedDepths.has(label));
+            const offsetStep = 0.1; // Offset vertical para separar espectros
+            
+            visibleData.forEach(([label, data], index) => {
+                traces.push({
+                    x: data.frequency,
+                    y: data.transmittance.map(val => val + (index * offsetStep)),
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: label,
+                    line: {
+                        color: data.color,
+                        width: 2
+                    },
+                    hovertemplate: `
+                        <b>${label}</b><br>
+                        Wavenumber: %{x:.1f} cm⁻¹<br>
+                        Transmittance: %{customdata:.4f}<br>
+                        <extra></extra>
+                    `,
+                    customdata: data.transmittance
+                });
+            });
+            
+            const layout = {
+                title: 'FTIR Spectra - Individual View (Offset)',
+                xaxis: {
+                    title: 'Wavenumber (cm⁻¹)',
+                    autorange: 'reversed',
+                    showgrid: true,
+                    gridcolor: '#e2e8f0'
+                },
+                yaxis: {
+                    title: 'Absorbance (offset)',
+                    showgrid: true,
+                    gridcolor: '#e2e8f0'
+                },
+                hovermode: 'closest',
+                showlegend: true,
+                legend: {
+                    orientation: 'v',
+                    x: 0.98,
+                    xanchor: 'right',
+                    y: 1,
+                    yanchor: 'top',
+                    bgcolor: 'rgba(255,255,255,0.92)',
+                    bordercolor: '#e2e8f0',
+                    borderwidth: 1,
+                    font: { size: 14 },
+                    tracegroupgap: 30,
+                    valign: 'top'
+                },
+                margin: {
+                    l: 60,
+                    r: 20,
+                    t: 50,
+                    b: 110
+                },
+                plot_bgcolor: 'white',
+                paper_bgcolor: 'white'
+            };
+            
+            const config = {
+                responsive: true,
+                displayModeBar: true,
+                modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d'],
+                displaylogo: false
+            };
+            
+            Plotly.newPlot(plotElement, traces, layout, config);
+        }
+
+        // Variables de estado para los diferentes gráficos
+        let depthViewMode = 'overlay';
+        let oxidationViewMode = 'overlay';
+        let crystallinityViewMode = 'overlay';
+        let tviViewMode = 'overlay';
+
+        // ===== DEPTH PROFILE TOGGLE =====
+        function toggleDepthView() {
+            if (depthViewMode === 'overlay') {
+                depthViewMode = 'individual';
+                document.getElementById('toggleDepthViewBtn').innerHTML = '<i class="fas fa-grip-lines me-1"></i>Individual View';
+                plotIndividualDepthProfile();
+            } else if (depthViewMode === 'individual') {
+                depthViewMode = '3d';
+                document.getElementById('toggleDepthViewBtn').innerHTML = '<i class="fas fa-cube me-1"></i>3D View';
+                plot3DDepthProfile();
+            } else {
+                depthViewMode = 'overlay';
+                document.getElementById('toggleDepthViewBtn').innerHTML = '<i class="fas fa-layer-group me-1"></i>Toggle View';
+                plotDepthProfile();
+            }
+        }
+
+        function plot3DDepthProfile() {
+            const plotElement = document.getElementById('depthProfilePlot');
+            if (!plotElement) return;
+            
+            const results = getAllAnalysisResults();
+            if (results.depths.length === 0) return;
+            
+            // Clear any existing Plotly plot
+            plotElement.innerHTML = '';
+            
+            const traces = [];
+            
+            // Oxidation depth profile
+            if (results.oxidation.some(val => val !== null)) {
+                traces.push({
+                    x: results.depths,
+                    y: Array(results.depths.length).fill(0),
+                    z: results.oxidation,
+                    type: 'scatter3d',
+                    mode: 'lines+markers',
+                    name: 'Oxidation Index',
+                    line: {
+                        color: '#e74c3c',
+                        width: 4
+                    },
+                    marker: {
+                        size: 6,
+                        color: '#e74c3c'
+                    }
+                });
+            }
+            
+            // Crystallinity depth profile
+            if (results.crystallinity.some(val => val !== null)) {
+                traces.push({
+                    x: results.depths,
+                    y: Array(results.depths.length).fill(1),
+                    z: results.crystallinity,
+                    type: 'scatter3d',
+                    mode: 'lines+markers',
+                    name: 'Crystallinity Index',
+                    line: {
+                        color: '#3498db',
+                        width: 4
+                    },
+                    marker: {
+                        size: 6,
+                        color: '#3498db'
+                    }
+                });
+            }
+            
+            // TVI depth profile
+            if (results.tvi.some(val => val !== null)) {
+                traces.push({
+                    x: results.depths,
+                    y: Array(results.depths.length).fill(2),
+                    z: results.tvi,
+                    type: 'scatter3d',
+                    mode: 'lines+markers',
+                    name: 'TVI Index',
+                    line: {
+                        color: '#2ecc71',
+                        width: 4
+                    },
+                    marker: {
+                        size: 6,
+                        color: '#2ecc71'
+                    }
+                });
+            }
+            
+            const layout = {
+                title: {
+                    text: 'Analysis Results vs Depth - 3D View',
+                    font: { color: '#e0e0e0' }
+                },
+                scene: {
+                    xaxis: {
+                        title: 'Depth (μm)',
+                        showgrid: true,
+                        gridcolor: '#444444',
+                        backgroundcolor: '#1a1a1a',
+                        titlefont: { color: '#e0e0e0' },
+                        tickfont: { color: '#c0c0c0' }
+                    },
+                    yaxis: {
+                        title: 'Index Type',
+                        showgrid: true,
+                        gridcolor: '#444444',
+                        backgroundcolor: '#1a1a1a',
+                        titlefont: { color: '#e0e0e0' },
+                        tickfont: { color: '#c0c0c0' }
+                    },
+                    zaxis: {
+                        title: 'Index Value',
+                        showgrid: true,
+                        gridcolor: '#444444',
+                        backgroundcolor: '#1a1a1a',
+                        titlefont: { color: '#e0e0e0' },
+                        tickfont: { color: '#c0c0c0' }
+                    },
+                    bgcolor: '#1a1a1a',
+                    camera: {
+                        eye: { x: 1.5, y: 1.5, z: 1.3 },
+                        center: { x: 0, y: 0, z: 0 },
+                        up: { x: 0, y: 0, z: 1 }
+                    }
+                },
+                showlegend: true,
+                legend: {
+                    bgcolor: 'rgba(30,30,30,0.95)',
+                    bordercolor: '#444444',
+                    borderwidth: 1,
+                    font: { size: 12, color: '#e0e0e0' }
+                },
+                margin: {
+                    l: 0,
+                    r: 0,
+                    t: 40,
+                    b: 0
+                },
+                paper_bgcolor: '#0d0d0d',
+                plot_bgcolor: '#1a1a1a'
+            };
+            
+            const config = {
+                responsive: true,
+                displayModeBar: true,
+                modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d'],
+                displaylogo: false
+            };
+            
+            Plotly.newPlot(plotElement, traces, layout, config);
+        }
+
+        function plotIndividualDepthProfile() {
+            const plotElement = document.getElementById('depthProfilePlot');
+            if (!plotElement) return;
+            
+            const results = getAllAnalysisResults();
+            if (results.depths.length === 0) return;
+            
+            // Clear any existing Plotly plot
+            plotElement.innerHTML = '';
+            
+            const traces = [];
+            const offsetStep = 0.8;
+            
+            // Oxidation depth profile with offset
+            if (results.oxidation.some(val => val !== null)) {
+                traces.push({
+                    x: results.depths,
+                    y: results.oxidation.map(val => val !== null ? val + 0 : null),
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    name: 'Oxidation Index',
+                    line: {
+                        color: '#e74c3c',
+                        width: 3
+                    },
+                    marker: {
+                        size: 8,
+                        color: '#e74c3c'
+                    }
+                });
+            }
+            
+            // Crystallinity depth profile with offset
+            if (results.crystallinity.some(val => val !== null)) {
+                traces.push({
+                    x: results.depths,
+                    y: results.crystallinity.map(val => val !== null ? val + offsetStep : null),
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    name: 'Crystallinity Index',
+                    line: {
+                        color: '#3498db',
+                        width: 3
+                    },
+                    marker: {
+                        size: 8,
+                        color: '#3498db'
+                    }
+                });
+            }
+            
+            // TVI depth profile with offset
+            if (results.tvi.some(val => val !== null)) {
+                traces.push({
+                    x: results.depths,
+                    y: results.tvi.map(val => val !== null ? val + (offsetStep * 2) : null),
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    name: 'TVI Index',
+                    line: {
+                        color: '#2ecc71',
+                        width: 3
+                    },
+                    marker: {
+                        size: 8,
+                        color: '#2ecc71'
+                    }
+                });
+            }
+            
+            const layout = {
+                title: 'Analysis Results vs Depth - Individual View',
+                xaxis: {
+                    title: 'Depth (μm)',
+                    showgrid: true,
+                    gridcolor: '#e2e8f0'
+                },
+                yaxis: {
+                    title: 'Index Value (offset)',
+                    showgrid: true,
+                    gridcolor: '#e2e8f0'
+                },
+                hovermode: 'closest',
+                showlegend: true,
+                legend: {
+                    orientation: 'v',
+                    x: 0.98,
+                    xanchor: 'right',
+                    y: 1,
+                    yanchor: 'top',
+                    bgcolor: 'rgba(255,255,255,0.92)',
+                    bordercolor: '#e2e8f0',
+                    borderwidth: 1
+                },
+                plot_bgcolor: 'white',
+                paper_bgcolor: 'white'
+            };
+            
+            const config = {
+                responsive: true,
+                displayModeBar: true,
+                displaylogo: false
+            };
+            
+            Plotly.newPlot(plotElement, traces, layout, config);
+        }
+
+        function resetDepthZoom() {
+            const plotElement = document.getElementById('depthProfilePlot');
+            if (!plotElement || !plotElement.data) return;
+            
+            Plotly.relayout(plotElement, {
+                'xaxis.autorange': true,
+                'yaxis.autorange': true,
+                'scene.camera': {
+                    eye: { x: 1.5, y: 1.5, z: 1.3 },
+                    center: { x: 0, y: 0, z: 0 },
+                    up: { x: 0, y: 0, z: 1 }
+                }
+            });
+        }
+
+        // ===== OXIDATION ANALYSIS TOGGLE =====
+        function toggleOxidationView(type) {
+            if (oxidationViewMode === 'overlay') {
+                oxidationViewMode = 'individual';
+                document.getElementById(`toggleOxidation${type}ViewBtn`).innerHTML = '<i class="fas fa-grip-lines me-1"></i>Individual View';
+                if (type === 'Ref') plotIndividualOxidationReference();
+                else plotIndividualOxidationInterest();
+            } else if (oxidationViewMode === 'individual') {
+                oxidationViewMode = '3d';
+                document.getElementById(`toggleOxidation${type}ViewBtn`).innerHTML = '<i class="fas fa-cube me-1"></i>3D View';
+                if (type === 'Ref') plot3DOxidationReference();
+                else plot3DOxidationInterest();
+            } else {
+                oxidationViewMode = 'overlay';
+                document.getElementById(`toggleOxidation${type}ViewBtn`).innerHTML = '<i class="fas fa-layer-group me-1"></i>Toggle View';
+                updateReferenceIntervalPlot('oxidation');
+                if (type === 'Int') updateInterestIntervalPlot('oxidation');
+            }
+        }
+
+        function plot3DOxidationReference() {
+            const plotElement = document.getElementById('oxidationReferencePlot');
+            if (!plotElement) return;
+            
+            const spectraData = window.AppState.spectraData;
+            const results = window.AppState.analysisResults['oxidation'];
+            if (!spectraData || !results) return;
+            
+            const visibleData = Object.entries(spectraData).filter(([label]) => !(window.AppState.maskedDepths?.has(label)));
+            const getDepthNumber = (label) => {
+                const match = label.match(/(\d+\.?\d*)\s*(µm|um|μm)/i);
+                return match ? parseFloat(match[1]) : 0;
+            };
+            
+            visibleData.sort((a, b) => getDepthNumber(a[0]) - getDepthNumber(b[0]));
+            
+            const traces = [];
+            const parameters = getAnalysisParameters('oxidation');
+            const referencePeak = parameters.referencePeak;
+            
+            visibleData.forEach(([label, data]) => {
+                const depth = getDepthNumber(label);
+                const result = results[label];
+                const correctedData = result && result.correctedSpectrum ? result.correctedSpectrum : data;
+                
+                const refIndices = [];
+                for (let i = 0; i < correctedData.frequency.length; i++) {
+                    if (correctedData.frequency[i] >= referencePeak.min && correctedData.frequency[i] <= referencePeak.max) {
+                        refIndices.push(i);
+                    }
+                }
+                
+                if (refIndices.length > 0) {
+                    traces.push({
+                        x: refIndices.map(i => correctedData.frequency[i]),
+                        y: Array(refIndices.length).fill(depth),
+                        z: refIndices.map(i => correctedData.transmittance[i]),
+                        type: 'scatter3d',
+                        mode: 'lines',
+                        name: label,
+                        line: {
+                            color: data.color,
+                            width: 3
+                        }
+                    });
+                }
+            });
+            
+            const layout = {
+                title: { text: 'Oxidation Reference Interval - 3D View', font: { color: '#e0e0e0' } },
+                scene: {
+                    xaxis: { title: 'Wavenumber (cm⁻¹)', autorange: 'reversed', gridcolor: '#444444', backgroundcolor: '#1a1a1a', titlefont: { color: '#e0e0e0' }, tickfont: { color: '#c0c0c0' } },
+                    yaxis: { title: 'Depth (μm)', gridcolor: '#444444', backgroundcolor: '#1a1a1a', titlefont: { color: '#e0e0e0' }, tickfont: { color: '#c0c0c0' } },
+                    zaxis: { title: 'Absorbance', gridcolor: '#444444', backgroundcolor: '#1a1a1a', titlefont: { color: '#e0e0e0' }, tickfont: { color: '#c0c0c0' } },
+                    bgcolor: '#1a1a1a',
+                    camera: { eye: { x: 1.5, y: 1.5, z: 1.3 }, center: { x: 0, y: 0, z: 0 }, up: { x: 0, y: 0, z: 1 } }
+                },
+                showlegend: true,
+                legend: { bgcolor: 'rgba(30,30,30,0.95)', bordercolor: '#444444', borderwidth: 1, font: { color: '#e0e0e0' } },
+                paper_bgcolor: '#0d0d0d',
+                plot_bgcolor: '#1a1a1a'
+            };
+            
+            Plotly.newPlot(plotElement, traces, layout, { responsive: true, displayModeBar: true, displaylogo: false });
+        }
+
+        function plotIndividualOxidationReference() {
+            updateReferenceIntervalPlot('oxidation');
+        }
+
+        function plot3DOxidationInterest() {
+            const plotElement = document.getElementById('oxidationInterestPlot');
+            if (!plotElement) return;
+            
+            const spectraData = window.AppState.spectraData;
+            const results = window.AppState.analysisResults['oxidation'];
+            if (!spectraData || !results) return;
+            
+            const visibleData = Object.entries(spectraData).filter(([label]) => !(window.AppState.maskedDepths?.has(label)));
+            const getDepthNumber = (label) => {
+                const match = label.match(/(\d+\.?\d*)\s*(µm|um|μm)/i);
+                return match ? parseFloat(match[1]) : 0;
+            };
+            
+            visibleData.sort((a, b) => getDepthNumber(a[0]) - getDepthNumber(b[0]));
+            
+            const traces = [];
+            const parameters = getAnalysisParameters('oxidation');
+            const interestPeak = parameters.interestPeak;
+            
+            visibleData.forEach(([label, data]) => {
+                const depth = getDepthNumber(label);
+                const result = results[label];
+                const correctedData = result && result.correctedSpectrum ? result.correctedSpectrum : data;
+                
+                const intIndices = [];
+                for (let i = 0; i < correctedData.frequency.length; i++) {
+                    if (correctedData.frequency[i] >= interestPeak.min && correctedData.frequency[i] <= interestPeak.max) {
+                        intIndices.push(i);
+                    }
+                }
+                
+                if (intIndices.length > 0) {
+                    traces.push({
+                        x: intIndices.map(i => correctedData.frequency[i]),
+                        y: Array(intIndices.length).fill(depth),
+                        z: intIndices.map(i => correctedData.transmittance[i]),
+                        type: 'scatter3d',
+                        mode: 'lines',
+                        name: label,
+                        line: {
+                            color: data.color,
+                            width: 3
+                        }
+                    });
+                }
+            });
+            
+            const layout = {
+                title: { text: 'Oxidation Interest Interval - 3D View', font: { color: '#e0e0e0' } },
+                scene: {
+                    xaxis: { title: 'Wavenumber (cm⁻¹)', autorange: 'reversed', gridcolor: '#444444', backgroundcolor: '#1a1a1a', titlefont: { color: '#e0e0e0' }, tickfont: { color: '#c0c0c0' } },
+                    yaxis: { title: 'Depth (μm)', gridcolor: '#444444', backgroundcolor: '#1a1a1a', titlefont: { color: '#e0e0e0' }, tickfont: { color: '#c0c0c0' } },
+                    zaxis: { title: 'Absorbance', gridcolor: '#444444', backgroundcolor: '#1a1a1a', titlefont: { color: '#e0e0e0' }, tickfont: { color: '#c0c0c0' } },
+                    bgcolor: '#1a1a1a',
+                    camera: { eye: { x: 1.5, y: 1.5, z: 1.3 }, center: { x: 0, y: 0, z: 0 }, up: { x: 0, y: 0, z: 1 } }
+                },
+                showlegend: true,
+                legend: { bgcolor: 'rgba(30,30,30,0.95)', bordercolor: '#444444', borderwidth: 1, font: { color: '#e0e0e0' } },
+                paper_bgcolor: '#0d0d0d',
+                plot_bgcolor: '#1a1a1a'
+            };
+            
+            Plotly.newPlot(plotElement, traces, layout, { responsive: true, displayModeBar: true, displaylogo: false });
+        }
+
+        function plotIndividualOxidationInterest() {
+            updateInterestIntervalPlot('oxidation');
+        }
+
+        function resetOxidationZoom(type) {
+            const plotId = type === 'Ref' ? 'oxidationReferencePlot' : 'oxidationInterestPlot';
+            const plotElement = document.getElementById(plotId);
+            if (!plotElement || !plotElement.data) return;
+            
+            Plotly.relayout(plotElement, {
+                'xaxis.autorange': true,
+                'yaxis.autorange': true,
+                'scene.camera': {
+                    eye: { x: 1.5, y: 1.5, z: 1.3 },
+                    center: { x: 0, y: 0, z: 0 },
+                    up: { x: 0, y: 0, z: 1 }
+                }
+            });
+        }
+
+        // ===== CRYSTALLINITY ANALYSIS TOGGLE =====
+        function toggleCrystallinityView(type) {
+            if (crystallinityViewMode === 'overlay') {
+                crystallinityViewMode = 'individual';
+                document.getElementById(`toggleCrystallinity${type}ViewBtn`).innerHTML = '<i class="fas fa-grip-lines me-1"></i>Individual View';
+                if (type === 'Ref') plotIndividualCrystallinityReference();
+                else plotIndividualCrystallinityInterest();
+            } else if (crystallinityViewMode === 'individual') {
+                crystallinityViewMode = '3d';
+                document.getElementById(`toggleCrystallinity${type}ViewBtn`).innerHTML = '<i class="fas fa-cube me-1"></i>3D View';
+                if (type === 'Ref') plot3DCrystallinityReference();
+                else plot3DCrystallinityInterest();
+            } else {
+                crystallinityViewMode = 'overlay';
+                document.getElementById(`toggleCrystallinity${type}ViewBtn`).innerHTML = '<i class="fas fa-layer-group me-1"></i>Toggle View';
+                updateReferenceIntervalPlot('crystallinity');
+                if (type === 'Int') updateInterestIntervalPlot('crystallinity');
+            }
+        }
+
+        function plot3DCrystallinityReference() {
+            const plotElement = document.getElementById('crystallinityReferencePlot');
+            if (!plotElement) return;
+            
+            const spectraData = window.AppState.spectraData;
+            const results = window.AppState.analysisResults['crystallinity'];
+            if (!spectraData || !results) return;
+            
+            const visibleData = Object.entries(spectraData).filter(([label]) => !(window.AppState.maskedDepths?.has(label)));
+            const getDepthNumber = (label) => {
+                const match = label.match(/(\d+\.?\d*)\s*(µm|um|μm)/i);
+                return match ? parseFloat(match[1]) : 0;
+            };
+            
+            visibleData.sort((a, b) => getDepthNumber(a[0]) - getDepthNumber(b[0]));
+            
+            const traces = [];
+            const parameters = getAnalysisParameters('crystallinity');
+            const referencePeak = parameters.referencePeak;
+            
+            visibleData.forEach(([label, data]) => {
+                const depth = getDepthNumber(label);
+                const result = results[label];
+                const correctedData = result && result.correctedSpectrum ? result.correctedSpectrum : data;
+                
+                const refIndices = [];
+                for (let i = 0; i < correctedData.frequency.length; i++) {
+                    if (correctedData.frequency[i] >= referencePeak.min && correctedData.frequency[i] <= referencePeak.max) {
+                        refIndices.push(i);
+                    }
+                }
+                
+                if (refIndices.length > 0) {
+                    traces.push({
+                        x: refIndices.map(i => correctedData.frequency[i]),
+                        y: Array(refIndices.length).fill(depth),
+                        z: refIndices.map(i => correctedData.transmittance[i]),
+                        type: 'scatter3d',
+                        mode: 'lines',
+                        name: label,
+                        line: {
+                            color: data.color,
+                            width: 3
+                        }
+                    });
+                }
+            });
+            
+            const layout = {
+                title: { text: 'Crystallinity Reference Interval - 3D View', font: { color: '#e0e0e0' } },
+                scene: {
+                    xaxis: { title: 'Wavenumber (cm⁻¹)', autorange: 'reversed', gridcolor: '#444444', backgroundcolor: '#1a1a1a', titlefont: { color: '#e0e0e0' }, tickfont: { color: '#c0c0c0' } },
+                    yaxis: { title: 'Depth (μm)', gridcolor: '#444444', backgroundcolor: '#1a1a1a', titlefont: { color: '#e0e0e0' }, tickfont: { color: '#c0c0c0' } },
+                    zaxis: { title: 'Absorbance', gridcolor: '#444444', backgroundcolor: '#1a1a1a', titlefont: { color: '#e0e0e0' }, tickfont: { color: '#c0c0c0' } },
+                    bgcolor: '#1a1a1a',
+                    camera: { eye: { x: 1.5, y: 1.5, z: 1.3 }, center: { x: 0, y: 0, z: 0 }, up: { x: 0, y: 0, z: 1 } }
+                },
+                showlegend: true,
+                legend: { bgcolor: 'rgba(30,30,30,0.95)', bordercolor: '#444444', borderwidth: 1, font: { color: '#e0e0e0' } },
+                paper_bgcolor: '#0d0d0d',
+                plot_bgcolor: '#1a1a1a'
+            };
+            
+            Plotly.newPlot(plotElement, traces, layout, { responsive: true, displayModeBar: true, displaylogo: false });
+        }
+
+        function plotIndividualCrystallinityReference() {
+            updateReferenceIntervalPlot('crystallinity');
+        }
+
+        function plot3DCrystallinityInterest() {
+            const plotElement = document.getElementById('crystallinityInterestPlot');
+            if (!plotElement) return;
+            
+            const spectraData = window.AppState.spectraData;
+            const results = window.AppState.analysisResults['crystallinity'];
+            if (!spectraData || !results) return;
+            
+            const visibleData = Object.entries(spectraData).filter(([label]) => !(window.AppState.maskedDepths?.has(label)));
+            const getDepthNumber = (label) => {
+                const match = label.match(/(\d+\.?\d*)\s*(µm|um|μm)/i);
+                return match ? parseFloat(match[1]) : 0;
+            };
+            
+            visibleData.sort((a, b) => getDepthNumber(a[0]) - getDepthNumber(b[0]));
+            
+            const traces = [];
+            const parameters = getAnalysisParameters('crystallinity');
+            const interestPeak = parameters.interestPeak;
+            
+            visibleData.forEach(([label, data]) => {
+                const depth = getDepthNumber(label);
+                const result = results[label];
+                const correctedData = result && result.correctedSpectrum ? result.correctedSpectrum : data;
+                
+                const intIndices = [];
+                for (let i = 0; i < correctedData.frequency.length; i++) {
+                    if (correctedData.frequency[i] >= interestPeak.min && correctedData.frequency[i] <= interestPeak.max) {
+                        intIndices.push(i);
+                    }
+                }
+                
+                if (intIndices.length > 0) {
+                    traces.push({
+                        x: intIndices.map(i => correctedData.frequency[i]),
+                        y: Array(intIndices.length).fill(depth),
+                        z: intIndices.map(i => correctedData.transmittance[i]),
+                        type: 'scatter3d',
+                        mode: 'lines',
+                        name: label,
+                        line: {
+                            color: data.color,
+                            width: 3
+                        }
+                    });
+                }
+            });
+            
+            const layout = {
+                title: { text: 'Crystallinity Interest Interval - 3D View', font: { color: '#e0e0e0' } },
+                scene: {
+                    xaxis: { title: 'Wavenumber (cm⁻¹)', autorange: 'reversed', gridcolor: '#444444', backgroundcolor: '#1a1a1a', titlefont: { color: '#e0e0e0' }, tickfont: { color: '#c0c0c0' } },
+                    yaxis: { title: 'Depth (μm)', gridcolor: '#444444', backgroundcolor: '#1a1a1a', titlefont: { color: '#e0e0e0' }, tickfont: { color: '#c0c0c0' } },
+                    zaxis: { title: 'Absorbance', gridcolor: '#444444', backgroundcolor: '#1a1a1a', titlefont: { color: '#e0e0e0' }, tickfont: { color: '#c0c0c0' } },
+                    bgcolor: '#1a1a1a',
+                    camera: { eye: { x: 1.5, y: 1.5, z: 1.3 }, center: { x: 0, y: 0, z: 0 }, up: { x: 0, y: 0, z: 1 } }
+                },
+                showlegend: true,
+                legend: { bgcolor: 'rgba(30,30,30,0.95)', bordercolor: '#444444', borderwidth: 1, font: { color: '#e0e0e0' } },
+                paper_bgcolor: '#0d0d0d',
+                plot_bgcolor: '#1a1a1a'
+            };
+            
+            Plotly.newPlot(plotElement, traces, layout, { responsive: true, displayModeBar: true, displaylogo: false });
+        }
+
+        function plotIndividualCrystallinityInterest() {
+            updateInterestIntervalPlot('crystallinity');
+        }
+
+        function resetCrystallinityZoom(type) {
+            const plotId = type === 'Ref' ? 'crystallinityReferencePlot' : 'crystallinityInterestPlot';
+            const plotElement = document.getElementById(plotId);
+            if (!plotElement || !plotElement.data) return;
+            
+            Plotly.relayout(plotElement, {
+                'xaxis.autorange': true,
+                'yaxis.autorange': true,
+                'scene.camera': {
+                    eye: { x: 1.5, y: 1.5, z: 1.3 },
+                    center: { x: 0, y: 0, z: 0 },
+                    up: { x: 0, y: 0, z: 1 }
+                }
+            });
+        }
+
+        // ===== TVI ANALYSIS TOGGLE =====
+        function toggleTVIView(type) {
+            if (tviViewMode === 'overlay') {
+                tviViewMode = 'individual';
+                document.getElementById(`toggleTVI${type}ViewBtn`).innerHTML = '<i class="fas fa-grip-lines me-1"></i>Individual View';
+                if (type === 'Ref') plotIndividualTVIReference();
+                else plotIndividualTVIInterest();
+            } else if (tviViewMode === 'individual') {
+                tviViewMode = '3d';
+                document.getElementById(`toggleTVI${type}ViewBtn`).innerHTML = '<i class="fas fa-cube me-1"></i>3D View';
+                if (type === 'Ref') plot3DTVIReference();
+                else plot3DTVIInterest();
+            } else {
+                tviViewMode = 'overlay';
+                document.getElementById(`toggleTVI${type}ViewBtn`).innerHTML = '<i class="fas fa-layer-group me-1"></i>Toggle View';
+                updateReferenceIntervalPlot('tvi');
+                if (type === 'Int') updateInterestIntervalPlot('tvi');
+            }
+        }
+
+        function plot3DTVIReference() {
+            const plotElement = document.getElementById('tviReferencePlot');
+            if (!plotElement) return;
+            
+            const spectraData = window.AppState.spectraData;
+            const results = window.AppState.analysisResults['tvi'];
+            if (!spectraData || !results) return;
+            
+            const visibleData = Object.entries(spectraData).filter(([label]) => !(window.AppState.maskedDepths?.has(label)));
+            const getDepthNumber = (label) => {
+                const match = label.match(/(\d+\.?\d*)\s*(µm|um|μm)/i);
+                return match ? parseFloat(match[1]) : 0;
+            };
+            
+            visibleData.sort((a, b) => getDepthNumber(a[0]) - getDepthNumber(b[0]));
+            
+            const traces = [];
+            const parameters = getAnalysisParameters('tvi');
+            const referencePeak = parameters.referencePeak;
+            
+            visibleData.forEach(([label, data]) => {
+                const depth = getDepthNumber(label);
+                const result = results[label];
+                const correctedData = result && result.correctedSpectrum ? result.correctedSpectrum : data;
+                
+                const refIndices = [];
+                for (let i = 0; i < correctedData.frequency.length; i++) {
+                    if (correctedData.frequency[i] >= referencePeak.min && correctedData.frequency[i] <= referencePeak.max) {
+                        refIndices.push(i);
+                    }
+                }
+                
+                if (refIndices.length > 0) {
+                    traces.push({
+                        x: refIndices.map(i => correctedData.frequency[i]),
+                        y: Array(refIndices.length).fill(depth),
+                        z: refIndices.map(i => correctedData.transmittance[i]),
+                        type: 'scatter3d',
+                        mode: 'lines',
+                        name: label,
+                        line: {
+                            color: data.color,
+                            width: 3
+                        }
+                    });
+                }
+            });
+            
+            const layout = {
+                title: { text: 'TVI Reference Interval - 3D View', font: { color: '#e0e0e0' } },
+                scene: {
+                    xaxis: { title: 'Wavenumber (cm⁻¹)', autorange: 'reversed', gridcolor: '#444444', backgroundcolor: '#1a1a1a', titlefont: { color: '#e0e0e0' }, tickfont: { color: '#c0c0c0' } },
+                    yaxis: { title: 'Depth (μm)', gridcolor: '#444444', backgroundcolor: '#1a1a1a', titlefont: { color: '#e0e0e0' }, tickfont: { color: '#c0c0c0' } },
+                    zaxis: { title: 'Absorbance', gridcolor: '#444444', backgroundcolor: '#1a1a1a', titlefont: { color: '#e0e0e0' }, tickfont: { color: '#c0c0c0' } },
+                    bgcolor: '#1a1a1a',
+                    camera: { eye: { x: 1.5, y: 1.5, z: 1.3 }, center: { x: 0, y: 0, z: 0 }, up: { x: 0, y: 0, z: 1 } }
+                },
+                showlegend: true,
+                legend: { bgcolor: 'rgba(30,30,30,0.95)', bordercolor: '#444444', borderwidth: 1, font: { color: '#e0e0e0' } },
+                paper_bgcolor: '#0d0d0d',
+                plot_bgcolor: '#1a1a1a'
+            };
+            
+            Plotly.newPlot(plotElement, traces, layout, { responsive: true, displayModeBar: true, displaylogo: false });
+        }
+
+        function plotIndividualTVIReference() {
+            updateReferenceIntervalPlot('tvi');
+        }
+
+        function plot3DTVIInterest() {
+            const plotElement = document.getElementById('tviInterestPlot');
+            if (!plotElement) return;
+            
+            const spectraData = window.AppState.spectraData;
+            const results = window.AppState.analysisResults['tvi'];
+            if (!spectraData || !results) return;
+            
+            const visibleData = Object.entries(spectraData).filter(([label]) => !(window.AppState.maskedDepths?.has(label)));
+            const getDepthNumber = (label) => {
+                const match = label.match(/(\d+\.?\d*)\s*(µm|um|μm)/i);
+                return match ? parseFloat(match[1]) : 0;
+            };
+            
+            visibleData.sort((a, b) => getDepthNumber(a[0]) - getDepthNumber(b[0]));
+            
+            const traces = [];
+            const parameters = getAnalysisParameters('tvi');
+            const interestPeak = parameters.interestPeak;
+            
+            visibleData.forEach(([label, data]) => {
+                const depth = getDepthNumber(label);
+                const result = results[label];
+                const correctedData = result && result.correctedSpectrum ? result.correctedSpectrum : data;
+                
+                const intIndices = [];
+                for (let i = 0; i < correctedData.frequency.length; i++) {
+                    if (correctedData.frequency[i] >= interestPeak.min && correctedData.frequency[i] <= interestPeak.max) {
+                        intIndices.push(i);
+                    }
+                }
+                
+                if (intIndices.length > 0) {
+                    traces.push({
+                        x: intIndices.map(i => correctedData.frequency[i]),
+                        y: Array(intIndices.length).fill(depth),
+                        z: intIndices.map(i => correctedData.transmittance[i]),
+                        type: 'scatter3d',
+                        mode: 'lines',
+                        name: label,
+                        line: {
+                            color: data.color,
+                            width: 3
+                        }
+                    });
+                }
+            });
+            
+            const layout = {
+                title: { text: 'TVI Interest Interval - 3D View', font: { color: '#e0e0e0' } },
+                scene: {
+                    xaxis: { title: 'Wavenumber (cm⁻¹)', autorange: 'reversed', gridcolor: '#444444', backgroundcolor: '#1a1a1a', titlefont: { color: '#e0e0e0' }, tickfont: { color: '#c0c0c0' } },
+                    yaxis: { title: 'Depth (μm)', gridcolor: '#444444', backgroundcolor: '#1a1a1a', titlefont: { color: '#e0e0e0' }, tickfont: { color: '#c0c0c0' } },
+                    zaxis: { title: 'Absorbance', gridcolor: '#444444', backgroundcolor: '#1a1a1a', titlefont: { color: '#e0e0e0' }, tickfont: { color: '#c0c0c0' } },
+                    bgcolor: '#1a1a1a',
+                    camera: { eye: { x: 1.5, y: 1.5, z: 1.3 }, center: { x: 0, y: 0, z: 0 }, up: { x: 0, y: 0, z: 1 } }
+                },
+                showlegend: true,
+                legend: { bgcolor: 'rgba(30,30,30,0.95)', bordercolor: '#444444', borderwidth: 1, font: { color: '#e0e0e0' } },
+                paper_bgcolor: '#0d0d0d',
+                plot_bgcolor: '#1a1a1a'
+            };
+            
+            Plotly.newPlot(plotElement, traces, layout, { responsive: true, displayModeBar: true, displaylogo: false });
+        }
+
+        function plotIndividualTVIInterest() {
+            updateInterestIntervalPlot('tvi');
+        }
+
+        function resetTVIZoom(type) {
+            const plotId = type === 'Ref' ? 'tviReferencePlot' : 'tviInterestPlot';
+            const plotElement = document.getElementById(plotId);
+            if (!plotElement || !plotElement.data) return;
+            
+            Plotly.relayout(plotElement, {
+                'xaxis.autorange': true,
+                'yaxis.autorange': true,
+                'scene.camera': {
+                    eye: { x: 1.5, y: 1.5, z: 1.3 },
+                    center: { x: 0, y: 0, z: 0 },
+                    up: { x: 0, y: 0, z: 1 }
+                }
+            });
+        }
+        
+        function resetOverviewZoom() {
+            const plotElement = document.getElementById('overviewPlot');
+            if (!plotElement) return;
+            
+            if (viewMode === '3d') {
+                // Reset 3D camera
+                Plotly.relayout(plotElement, {
+                    'scene.camera.eye': { x: 1.5, y: 1.5, z: 1.3 },
+                    'scene.camera.center': { x: 0, y: 0, z: 0 },
+                    'scene.xaxis.autorange': true,
+                    'scene.yaxis.autorange': true,
+                    'scene.zaxis.autorange': true
+                });
+            } else {
+                // Reset 2D axes
+                Plotly.relayout(plotElement, {
+                    'xaxis.autorange': true,
+                    'yaxis.autorange': true
+                });
+            }
+        }
+
         function plotSpectraOverview() {
             const plotElement = document.getElementById('overviewPlot');
             const spectraData = window.AppState.spectraData;
@@ -8683,10 +10141,7 @@
                         
                         // NOTE: Do NOT update window.AppState.spectraData[label] to avoid contamination
                         // Each tab works with its own copy of the data
-                        window.addEventListener('resize', () => {
-                    Plotly.Plots.resize(document.getElementById('multiDeconvPlot'));
-                });
-            } catch (error) {
+                    } catch (error) {
                         console.error(`Error processing spectrum ${label}:`, error);
                         results[label] = { error: error.message };
                     }
@@ -10755,6 +12210,9 @@
                 return;
             }
             
+            // Clear any existing Plotly plot
+            plotElement.innerHTML = '';
+            
             const traces = [];
             
             // Oxidation depth profile
@@ -12084,6 +13542,613 @@
             }
         }
 
+        // ===== BATCH ANALYSIS FUNCTIONS =====
+        function parseExcelFile(arrayBuffer) {
+            try {
+                const data = new Uint8Array(arrayBuffer);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: null });
+                
+                // Parse the data into spectra format
+                const headers = jsonData[0] || [];
+                const spectraData = {};
+                let rawData = [[], []];
+
+                if (headers.length > 1) {
+                    // First column is frequency, rest are depths
+                    const frequencies = [];
+                    const depthData = {};
+
+                    for (let row = 1; row < jsonData.length; row++) {
+                        const rowData = jsonData[row];
+                        if (rowData && rowData.length > 0) {
+                            const freq = parseFloat(rowData[0]);
+                            if (!isNaN(freq)) {
+                                frequencies.push(freq);
+
+                                for (let col = 1; col < headers.length; col++) {
+                                    const depthLabel = String(headers[col] || `Depth ${col}`);
+                                    if (!depthData[depthLabel]) {
+                                        depthData[depthLabel] = [];
+                                    }
+                                    const value = parseFloat(rowData[col]);
+                                    depthData[depthLabel].push(isNaN(value) ? null : value);
+                                }
+                            }
+                        }
+                    }
+
+                    for (const [depthLabel, values] of Object.entries(depthData)) {
+                        spectraData[depthLabel] = {
+                            frequency: frequencies,
+                            transmittance: values,
+                            color: getColorForDepth(depthLabel)
+                        };
+                    }
+
+                    rawData = [frequencies, Object.values(depthData)[0] || []];
+                }
+
+                return { spectraData, rawData };
+            } catch (error) {
+                throw new Error('Failed to parse Excel file: ' + error.message);
+            }
+        }
+
+        function parseCSVFile(text) {
+            try {
+                const lines = text.split('\n').filter(line => line.trim());
+                const data = [];
+                
+                for (const line of lines) {
+                    // Try to detect delimiter
+                    let row;
+                    if (line.includes('\t')) {
+                        row = line.split('\t');
+                    } else if (line.includes(',')) {
+                        row = line.split(',');
+                    } else if (line.includes(';')) {
+                        row = line.split(';');
+                    } else {
+                        row = line.split(/\s+/);
+                    }
+
+                    data.push(row.map(cell => {
+                        const num = parseFloat(cell.trim());
+                        return isNaN(num) ? cell.trim() : num;
+                    }));
+                }
+
+                // Convert to spectra format
+                const headers = data[0] || [];
+                const spectraData = {};
+                const frequencies = [];
+                const depthData = {};
+
+                if (headers.length > 1) {
+                    for (let row = 1; row < data.length; row++) {
+                        const rowData = data[row];
+                        if (rowData && rowData.length > 0) {
+                            const freq = parseFloat(rowData[0]);
+                            if (!isNaN(freq)) {
+                                frequencies.push(freq);
+
+                                for (let col = 1; col < headers.length; col++) {
+                                    const depthLabel = String(headers[col] || `Depth ${col}`);
+                                    if (!depthData[depthLabel]) {
+                                        depthData[depthLabel] = [];
+                                    }
+                                    const value = parseFloat(rowData[col]);
+                                    depthData[depthLabel].push(isNaN(value) ? null : value);
+                                }
+                            }
+                        }
+                    }
+
+                    for (const [depthLabel, values] of Object.entries(depthData)) {
+                        spectraData[depthLabel] = {
+                            frequency: frequencies,
+                            transmittance: values,
+                            color: getColorForDepth(depthLabel)
+                        };
+                    }
+                }
+
+                return { spectraData, rawData: [frequencies, Object.values(depthData)[0] || []] };
+            } catch (error) {
+                throw new Error('Failed to parse CSV file: ' + error.message);
+            }
+        }
+
+        function parseDptFile(arrayBuffer, fileName) {
+            try {
+                const text = new TextDecoder().decode(arrayBuffer);
+                const lines = text.split('\n').filter(line => line.trim());
+                const frequencies = [];
+                const transmittance = [];
+
+                for (const line of lines) {
+                    const parts = line.trim().split(/\s+/);
+                    if (parts.length >= 2) {
+                        const freq = parseFloat(parts[0]);
+                        const value = parseFloat(parts[1]);
+                        if (!isNaN(freq) && !isNaN(value)) {
+                            frequencies.push(freq);
+                            transmittance.push(value);
+                        }
+                    }
+                }
+
+                if (frequencies.length === 0) {
+                    throw new Error('No valid data found in file');
+                }
+
+                // Extract depth from filename if possible
+                const depthMatch = fileName.match(/(_|-)(\d+)(?:\.\w+)?$/);
+                const depthLabel = depthMatch ? `${depthMatch[2]}μm` : fileName.replace(/\.[^/.]+$/, '');
+
+                const spectraData = {
+                    [depthLabel]: {
+                        frequency: frequencies,
+                        transmittance: transmittance,
+                        color: getColorForDepth(depthLabel)
+                    }
+                };
+
+                return { spectraData, rawData: [frequencies, transmittance] };
+            } catch (error) {
+                throw new Error('Failed to parse DPT file: ' + error.message);
+            }
+        }
+
+        function getColorForDepth(label) {
+            const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c', '#e67e22', '#34495e'];
+            const index = label.charCodeAt(0) % colors.length;
+            return colors[index];
+        }
+
+        // ===== BATCH ANALYSIS FUNCTIONS =====
+        function handleBatchFileSelection(event) {
+            const files = Array.from(event.target.files);
+            if (files.length === 0) {
+                document.getElementById('batchFilePreview').style.display = 'none';
+                document.getElementById('startBatchAnalysisBtn').disabled = true;
+                return;
+            }
+
+            window.AppState.batchFiles = files.map((file, index) => ({
+                file: file,
+                fileName: file.name,
+                sampleName: file.name.replace(/\.[^/.]+$/, ''),  // Remove extension
+                index: index,
+                status: 'pending',
+                error: null
+            }));
+
+            updateBatchFilePreview();
+            document.getElementById('startBatchAnalysisBtn').disabled = false;
+        }
+
+        function updateBatchFilePreview() {
+            const preview = document.getElementById('batchFilePreview');
+            const table = document.getElementById('batchFileTable');
+            const fileCount = window.AppState.batchFiles.length;
+
+            if (fileCount === 0) {
+                preview.style.display = 'none';
+                return;
+            }
+
+            preview.style.display = 'block';
+            table.innerHTML = '';
+
+            window.AppState.batchFiles.forEach((item, idx) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${idx + 1}</td>
+                    <td class="font-monospace text-break">${item.fileName}</td>
+                    <td>
+                        <input type="text" class="form-control form-control-sm batch-sample-name" 
+                               value="${item.sampleName}" data-index="${idx}"
+                               style="width: 100%;">
+                    </td>
+                    <td>
+                        <span class="badge bg-secondary" id="status-${idx}">Pending</span>
+                    </td>
+                `;
+                table.appendChild(row);
+            });
+
+            // Add listeners to editable sample names
+            document.querySelectorAll('.batch-sample-name').forEach(input => {
+                input.addEventListener('change', function() {
+                    const idx = parseInt(this.dataset.index);
+                    window.AppState.batchFiles[idx].sampleName = this.value || this.placeholder;
+                });
+            });
+        }
+
+        async function performBatchAnalysis() {
+            if (window.AppState.batchFiles.length === 0) {
+                showNotification('No files selected for batch analysis', 'warning');
+                return;
+            }
+
+            const oxMethod = document.getElementById('batchOxidationMethod').value;
+            const ciMethod = document.getElementById('batchCrystallinityMethod').value;
+            const totalFiles = window.AppState.batchFiles.length;
+
+            // Show progress section
+            document.getElementById('batchProgressSection').style.display = 'block';
+            document.getElementById('batchDownloadSection').style.display = 'none';
+            window.AppState.batchResults = {};
+            window.AppState.batchErrors = {};
+
+            showLoading('Starting batch analysis...');
+
+            for (let i = 0; i < totalFiles; i++) {
+                const fileItem = window.AppState.batchFiles[i];
+                updateBatchProgress(i, totalFiles, fileItem.sampleName);
+                updateStatusBadge(i, 'analyzing', 'Analyzing...');
+
+                try {
+                    // Load file data using the same pipeline as single file
+                    await loadBatchFile(fileItem.file);
+                    
+                    // Sync method selections - BEFORE any analysis
+                    const fullAutoOxidationMethod = document.getElementById('fullAutoOxidationMethod');
+                    const fullAutoCrystallinityMethod = document.getElementById('fullAutoCrystallinityMethod');
+                    const oxidationMethodSelect = document.getElementById('oxidationMethod');
+                    const crystallinityMethodSelect = document.getElementById('crystallinityMethod');
+                    
+                    if (oxidationMethodSelect) oxidationMethodSelect.value = oxMethod;
+                    if (crystallinityMethodSelect) crystallinityMethodSelect.value = ciMethod;
+
+                    // PASO 1: Aplicar corrección de offset automáticamente (same as performFullAutoAnalysis)
+                    try {
+                        applyOffsetCorrection();
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                    } catch (offsetError) {
+                        console.warn('Error en corrección de offset:', offsetError);
+                    }
+
+                    // PASO 2: Realizar análisis de oxidación
+                    try {
+                        performAutoAnalysis('oxidation');
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                    } catch (oxError) {
+                        console.error('Error en análisis de oxidación:', oxError);
+                        throw oxError;
+                    }
+
+                    // PASO 3: Realizar análisis de cristalinidad
+                    try {
+                        performAutoAnalysis('crystallinity');
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                    } catch (crystError) {
+                        console.error('Error en análisis de cristalinidad:', crystError);
+                        throw crystError;
+                    }
+
+                    // PASO 4: Realizar análisis TVI
+                    try {
+                        performAutoAnalysis('tvi');
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                    } catch (tviError) {
+                        console.error('Error en análisis TVI:', tviError);
+                        throw tviError;
+                    }
+
+                    // PASO 5: Generar perfil de profundidad
+                    try {
+                        updateDepthProfile();
+                    } catch (depthError) {
+                        console.warn('Error en perfil de profundidad:', depthError);
+                        // Don't throw - continue if depth profile fails
+                    }
+
+                    // Store results - get them AFTER all analysis is complete
+                    const results = getAllAnalysisResults();
+                    window.AppState.batchResults[fileItem.sampleName] = {
+                        fileName: fileItem.fileName,
+                        sampleName: fileItem.sampleName,
+                        analysisDate: new Date().toLocaleString(),
+                        oxMethod: oxMethod,
+                        ciMethod: ciMethod,
+                        results: results,
+                        status: 'success'
+                    };
+
+                    updateStatusBadge(i, 'success', 'Success');
+
+                } catch (error) {
+                    console.error(`Error analyzing ${fileItem.fileName}:`, error);
+                    window.AppState.batchErrors[fileItem.sampleName] = error.message;
+                    window.AppState.batchResults[fileItem.sampleName] = {
+                        fileName: fileItem.fileName,
+                        sampleName: fileItem.sampleName,
+                        error: error.message,
+                        status: 'failed'
+                    };
+                    updateStatusBadge(i, 'error', `Error: ${error.message.substring(0, 30)}`);
+                }
+            }
+
+            hideLoading();
+            updateBatchProgress(totalFiles, totalFiles, 'Analysis complete!');
+
+            // Show download button instead of auto-downloading
+            setTimeout(() => {
+                try {
+                    document.getElementById('batchProgressSection').style.display = 'none';
+                    document.getElementById('batchDownloadSection').style.display = 'block';
+                    showNotification('Batch analysis completed! Click the Download button to get your Excel file.', 'success');
+                } catch (error) {
+                    console.error('Error displaying results:', error);
+                    showNotification('Analysis completed but there was an error displaying results: ' + error.message, 'error');
+                }
+            }, 500);
+        }
+
+        function updateBatchProgress(current, total, currentFile) {
+            const percent = Math.round((current / total) * 100);
+            const progressBar = document.getElementById('batchProgressBar');
+            const progressPercent = document.getElementById('batchProgressPercent');
+            const progressText = document.getElementById('batchProgressText');
+            const currentFileSpan = document.getElementById('batchCurrentFile');
+
+            progressBar.style.width = percent + '%';
+            progressPercent.textContent = percent + '%';
+            progressText.textContent = `${current}/${total}`;
+            currentFileSpan.textContent = `Processing: ${currentFile}`;
+        }
+
+        function updateStatusBadge(index, status, text) {
+            const badge = document.getElementById(`status-${index}`);
+            if (!badge) return;
+
+            const colors = {
+                'pending': 'bg-secondary',
+                'analyzing': 'bg-info',
+                'success': 'bg-success',
+                'error': 'bg-danger',
+                'completed': 'bg-success'
+            };
+
+            badge.className = `badge ${colors[status] || 'bg-secondary'}`;
+            badge.textContent = text;
+        }
+
+        async function loadBatchFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+
+                reader.onload = async function(e) {
+                    try {
+                        let rawData;
+                        const fileName = file.name.toLowerCase();
+
+                        // Use the same loading functions as single file
+                        if (fileName.endsWith('.xlsx')) {
+                            rawData = await loadExcelFile(file);
+                        } else if (fileName.endsWith('.dpt')) {
+                            rawData = await loadDPTFile(file);
+                        } else if (fileName.endsWith('.spc')) {
+                            rawData = await loadSPCFile(file);
+                        } else if (fileName.endsWith('.csv')) {
+                            rawData = await loadCSVFile(file);
+                        } else if (fileName.endsWith('.txt')) {
+                            rawData = await loadTextFile(file);
+                        } else if (fileName.endsWith('.0')) {
+                            rawData = await loadBinaryFile(file);
+                        } else {
+                            throw new Error('Unsupported file format: ' + fileName);
+                        }
+
+                        if (!rawData) {
+                            throw new Error('No data extracted from file');
+                        }
+
+                        // Process the loaded data using the same pipeline as single file
+                        await processLoadedData(rawData);
+
+                        resolve();
+                    } catch (error) {
+                        reject(new Error(`Failed to load/process file: ${error.message}`));
+                    }
+                };
+
+                reader.onerror = () => {
+                    reject(new Error('Failed to read file'));
+                };
+
+                if (file.name.toLowerCase().endsWith('.xlsx')) {
+                    reader.readAsArrayBuffer(file);
+                } else if (file.name.toLowerCase().endsWith('.csv') || file.name.toLowerCase().endsWith('.txt')) {
+                    reader.readAsText(file);
+                } else {
+                    reader.readAsArrayBuffer(file);
+                }
+            });
+        }
+
+        // Helper function to format numbers with comma as decimal separator
+        function formatDecimalWithComma(number, decimals = 4) {
+            if (number === null || number === undefined || isNaN(number)) {
+                return 'N/A';
+            }
+            return number.toFixed(decimals).replace('.', ',');
+        }
+
+        async function generateBatchResultsExcel() {
+            // Check if XLSX library is available
+            if (typeof XLSX === 'undefined') {
+                throw new Error('Excel library not loaded. Please refresh the page and try again.');
+            }
+
+            const wb = XLSX.utils.book_new();
+
+            // Sheet 1: Results Summary
+            const summaryData = [];
+            summaryData.push(['FTIR Batch Analysis Results', '', '', '', '', '', '']);
+            summaryData.push(['Analysis Date', new Date().toLocaleString()]);
+            summaryData.push(['']);
+
+            const headers = ['Spectrum/Sample', 'Avg Oxidation', 'Std Dev Oxidation', 'Max Oxidation', 'Min Oxidation', 'Depth @ Max Ox', 'Depth @ Min Ox',
+                           'Avg Crystallinity', 'Std Dev Crystallinity', 'Max Crystallinity', 'Min Crystallinity', 'Depth @ Max Cryst', 'Depth @ Min Cryst',
+                           'Avg TVI', 'Std Dev TVI', 'Max TVI', 'Min TVI', 'Depth @ Max TVI', 'Depth @ Min TVI',
+                           'Status'];
+            summaryData.push(headers);
+
+            for (const [sampleName, result] of Object.entries(window.AppState.batchResults)) {
+                if (result.error) {
+                    summaryData.push([sampleName, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', `ERROR: ${result.error}`]);
+                    continue;
+                }
+
+                const stats = calculateBatchSpectrumStats(result.results);
+                summaryData.push([
+                    sampleName,
+                    formatDecimalWithComma(stats.oxidation.mean),
+                    formatDecimalWithComma(stats.oxidation.stdDev),
+                    formatDecimalWithComma(stats.oxidation.max),
+                    formatDecimalWithComma(stats.oxidation.min),
+                    stats.oxidation.maxDepth || 'N/A',
+                    stats.oxidation.minDepth || 'N/A',
+                    formatDecimalWithComma(stats.crystallinity.mean),
+                    formatDecimalWithComma(stats.crystallinity.stdDev),
+                    formatDecimalWithComma(stats.crystallinity.max),
+                    formatDecimalWithComma(stats.crystallinity.min),
+                    stats.crystallinity.maxDepth || 'N/A',
+                    stats.crystallinity.minDepth || 'N/A',
+                    formatDecimalWithComma(stats.tvi.mean),
+                    formatDecimalWithComma(stats.tvi.stdDev),
+                    formatDecimalWithComma(stats.tvi.max),
+                    formatDecimalWithComma(stats.tvi.min),
+                    stats.tvi.maxDepth || 'N/A',
+                    stats.tvi.minDepth || 'N/A',
+                    'Success'
+                ]);
+            }
+
+            const ws1 = XLSX.utils.aoa_to_sheet(summaryData);
+            XLSX.utils.book_append_sheet(wb, ws1, 'Results');
+
+            // Sheet 2: Methods Used
+            const methodsData = [];
+            methodsData.push(['Analysis Parameters']); 
+            methodsData.push(['']);
+            methodsData.push(['Spectrum', 'Oxidation Method', 'Crystallinity Method', 'Analysis Date']);
+
+            for (const [sampleName, result] of Object.entries(window.AppState.batchResults)) {
+                if (!result.error) {
+                    methodsData.push([
+                        sampleName,
+                        result.oxMethod === 'height' ? 'KOI Height-Based' : 'OI Area-Based (ASTM F2102)',
+                        result.ciMethod === 'height' ? 'CI Height-Based' : 'CI Area-Based',
+                        result.analysisDate
+                    ]);
+                }
+            }
+
+            const ws2 = XLSX.utils.aoa_to_sheet(methodsData);
+            XLSX.utils.book_append_sheet(wb, ws2, 'Methods');
+
+            // Sheet 3: Detailed Results
+            const detailedData = [];
+            detailedData.push(['Detailed Analysis Results']);
+            detailedData.push(['']);
+
+            for (const [sampleName, result] of Object.entries(window.AppState.batchResults)) {
+                if (result.error) continue;
+
+                detailedData.push([`Spectrum: ${sampleName}`]);
+                detailedData.push(['Depth Label', 'Oxidation Index', 'Crystallinity Index', 'TVI']);
+
+                const results = result.results;
+                const depths = results.depths || [];
+                const oxidation = results.oxidation || [];
+                const crystallinity = results.crystallinity || [];
+                const tvi = results.tvi || [];
+
+                for (let i = 0; i < depths.length; i++) {
+                    detailedData.push([
+                        depths[i] || `Depth ${i+1}`,
+                        formatDecimalWithComma(oxidation[i]),
+                        formatDecimalWithComma(crystallinity[i]),
+                        formatDecimalWithComma(tvi[i])
+                    ]);
+                }
+                detailedData.push(['']);
+            }
+
+            const ws3 = XLSX.utils.aoa_to_sheet(detailedData);
+            XLSX.utils.book_append_sheet(wb, ws3, 'Detailed');
+
+            // Sheet 4: Error Log (if any errors)
+            if (Object.keys(window.AppState.batchErrors).length > 0) {
+                const errorsData = [];
+                errorsData.push(['Error Log']);
+                errorsData.push(['']);
+                errorsData.push(['Spectrum', 'Error Message']);
+
+                for (const [sampleName, errorMsg] of Object.entries(window.AppState.batchErrors)) {
+                    errorsData.push([sampleName, errorMsg]);
+                }
+
+                const ws4 = XLSX.utils.aoa_to_sheet(errorsData);
+                XLSX.utils.book_append_sheet(wb, ws4, 'Errors');
+            }
+
+            // Generate timestamp for filename
+            const timestamp = new Date().toISOString().slice(0, 10);
+            XLSX.writeFile(wb, `FTIR_Batch_Analysis_${timestamp}.xlsx`);
+        }
+
+        function calculateBatchSpectrumStats(results) {
+            const stats = {};
+
+            for (const key of ['oxidation', 'crystallinity', 'tvi']) {
+                const values = results[key] || [];
+                const validValues = values.filter(v => v !== null && typeof v === 'number' && !isNaN(v));
+
+                if (validValues.length === 0) {
+                    stats[key] = {
+                        mean: 0,
+                        stdDev: 0,
+                        max: 0,
+                        min: 0,
+                        maxDepth: 'N/A',
+                        minDepth: 'N/A'
+                    };
+                    continue;
+                }
+
+                const mean = validValues.reduce((a, b) => a + b, 0) / validValues.length;
+                const variance = validValues.reduce((sq, n) => sq + Math.pow(n - mean, 2), 0) / validValues.length;
+                const stdDev = Math.sqrt(variance);
+                const max = Math.max(...validValues);
+                const min = Math.min(...validValues);
+
+                const depths = results.depths || [];
+                const maxIdx = values.indexOf(max);
+                const minIdx = values.indexOf(min);
+
+                stats[key] = {
+                    mean: mean,
+                    stdDev: stdDev,
+                    max: max,
+                    min: min,
+                    maxDepth: maxIdx >= 0 && maxIdx < depths.length ? depths[maxIdx] : 'N/A',
+                    minDepth: minIdx >= 0 && minIdx < depths.length ? depths[minIdx] : 'N/A'
+                };
+            }
+
+            return stats;
+        }
+
         // Función de análisis completo automático
         async function performFullAutoAnalysis() {
             if (!window.AppState.spectraData || Object.keys(window.AppState.spectraData).length === 0) {
@@ -12415,10 +14480,68 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
             
             // Event listener para análisis completo automático
             document.getElementById('fullAutoAnalysisBtn').addEventListener('click', performFullAutoAnalysis);
+
+            // Event listeners for batch analysis
+            document.getElementById('batchFileInput').addEventListener('change', handleBatchFileSelection);
+            document.getElementById('startBatchAnalysisBtn').addEventListener('click', performBatchAnalysis);
+            
+            const downloadBtn = document.getElementById('downloadBatchExcelBtn');
+            if (downloadBtn) {
+                downloadBtn.addEventListener('click', () => {
+                    try {
+                        generateBatchResultsExcel();
+                    } catch (error) {
+                        showNotification('Error generating Excel: ' + error.message, 'error');
+                    }
+                });
+            }
+            
+            // Show/hide batch analysis button based on active tab
+            const batchAnalysisTab = document.getElementById('batch-analysis-tab');
+            if (batchAnalysisTab) {
+                batchAnalysisTab.addEventListener('shown.bs.tab', function() {
+                    document.getElementById('startBatchAnalysisBtn').style.display = 'inline-block';
+                });
+            }
+            const otherTabs = ['single-file-tab', 'multi-files-tab'];
+            otherTabs.forEach(tabId => {
+                const tab = document.getElementById(tabId);
+                if (tab) {
+                    tab.addEventListener('shown.bs.tab', function() {
+                        document.getElementById('startBatchAnalysisBtn').style.display = 'none';
+                    });
+                }
+            });
             
             // Event listeners para reportes
             document.getElementById('generateReportsBtn').addEventListener('click', generateReports);
             document.getElementById('exportReportsBtn').addEventListener('click', exportReports);
+            
+            // Event listeners for spectrum overview controls
+            document.getElementById('toggleSpectraBtn').addEventListener('click', toggleSpectraOverlay);
+            document.getElementById('resetZoomBtn').addEventListener('click', resetOverviewZoom);
+            
+            // Event listeners for depth profile toggle and reset
+            document.getElementById('toggleDepthViewBtn').addEventListener('click', toggleDepthView);
+            document.getElementById('resetDepthZoomBtn').addEventListener('click', resetDepthZoom);
+            
+            // Event listeners for oxidation analysis toggle and reset
+            document.getElementById('toggleOxidationRefViewBtn')?.addEventListener('click', () => toggleOxidationView('Ref'));
+            document.getElementById('resetOxidationRefZoomBtn')?.addEventListener('click', () => resetOxidationZoom('Ref'));
+            document.getElementById('toggleOxidationIntViewBtn')?.addEventListener('click', () => toggleOxidationView('Int'));
+            document.getElementById('resetOxidationIntZoomBtn')?.addEventListener('click', () => resetOxidationZoom('Int'));
+            
+            // Event listeners for crystallinity analysis toggle and reset
+            document.getElementById('toggleCrystallinityRefViewBtn')?.addEventListener('click', () => toggleCrystallinityView('Ref'));
+            document.getElementById('resetCrystallinityRefZoomBtn')?.addEventListener('click', () => resetCrystallinityZoom('Ref'));
+            document.getElementById('toggleCrystallinityIntViewBtn')?.addEventListener('click', () => toggleCrystallinityView('Int'));
+            document.getElementById('resetCrystallinityIntZoomBtn')?.addEventListener('click', () => resetCrystallinityZoom('Int'));
+            
+            // Event listeners for TVI analysis toggle and reset
+            document.getElementById('toggleTVIRefViewBtn')?.addEventListener('click', () => toggleTVIView('Ref'));
+            document.getElementById('resetTVIRefZoomBtn')?.addEventListener('click', () => resetTVIZoom('Ref'));
+            document.getElementById('toggleTVIIntViewBtn')?.addEventListener('click', () => toggleTVIView('Int'));
+            document.getElementById('resetTVIIntZoomBtn')?.addEventListener('click', () => resetTVIZoom('Int'));
             
             // Event listeners for depth profile axis controls
             document.getElementById('applyDepthAxisBtn').addEventListener('click', applyDepthAxisRanges);
@@ -12442,8 +14565,8 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
             document.getElementById('exportMultiDeconvPdfBtn').addEventListener('click', exportMultipleDeconvolutionToPDF);
             document.getElementById('exportMultiDeconvExcelBtn').addEventListener('click', exportMultipleDeconvolutionToExcel);
             
-            // Event listeners para controles de visualización
-            document.getElementById('toggleSpectraBtn')?.addEventListener('click', () => alert('Alternar vista: Se implementará funcionalidad de vista individual/superpuesta.'));
+            // Event listeners para controles de visualización ya implementados arriba
+            // Removed duplicate listeners
             document.getElementById('resetZoomBtn')?.addEventListener('click', () => {
                 // Restablecer zoom en todos los gráficos
                 const plots = ['overviewPlot', 'oxidationPlot', 'crystallinityPlot', 'tviPlot', 'depthProfilePlot'];
@@ -12544,7 +14667,7 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                     showgrid: true,
                     gridcolor: 'rgba(128,128,128,0.2)'
                 },
-                margin: { l: 50, r: 20, t: 40, b: 50 },
+                margin: { l: 40, r: 10, t: 30, b: 40 },
                 showlegend: true,
                 legend: {
                     x: 1.0,
@@ -12556,10 +14679,15 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                 },
                 hovermode: 'closest',
                 plot_bgcolor: 'rgba(248, 249, 250, 0.6)',
-                paper_bgcolor: 'white',
-                
+                paper_bgcolor: 'white'
             };
-        const config = { responsive: true };
+        const config = { 
+            responsive: true, 
+            displayModeBar: true,
+            modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d', 'autoScale2d'],
+            displaylogo: false,
+            toImageButtonOptions: { format: 'png', filename: 'deconvolution.png', height: 600, width: 900, scale: 1 }
+        };
 
         async function performDeconvolution() {
             const performBtn = document.getElementById('performDeconvolutionBtn');
@@ -14042,7 +16170,7 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
                 title: 'Derivative Intensity' 
             },
             showlegend: true,
-            margin: { l: 60, r: 20, t: 40, b: 70 },
+            margin: { l: 40, r: 10, t: 30, b: 40 },
             plot_bgcolor: 'white',
             paper_bgcolor: 'white'
         };
@@ -14050,8 +16178,9 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
         const config = {
             responsive: true,
             displayModeBar: true,
-            modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d'],
-            displaylogo: false
+            modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d', 'autoScale2d'],
+            displaylogo: false,
+            toImageButtonOptions: { format: 'png', filename: 'derivatives.png', height: 600, width: 900, scale: 1 }
         };
         
         // *** ESTA LÍNEA FALTABA ***
@@ -17751,15 +19880,43 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
         // Function to resize all Plotly charts
         function resizeAllPlots() {
             const plots = document.querySelectorAll('.js-plotly-plot');
-            console.log('Resizing', plots.length, 'plots');
+            if (plots.length === 0) return;
+            
             plots.forEach(plot => {
                 try {
-                    Plotly.Plots.resize(plot);
+                    // Get parent container dimensions
+                    const parent = plot.parentElement;
+                    if (parent && parent.offsetWidth > 0 && parent.offsetHeight > 0) {
+                        // Force update with current dimensions
+                        Plotly.Plots.resize(plot);
+                    }
                 } catch (e) {
-                    console.error('Error resizing plot:', e);
+                    // Silently handle errors
                 }
             });
         }
+
+        // Initial resize setup - aggressive timing for app startup
+        function initializeCharts() {
+            resizeAllPlots();
+            setTimeout(resizeAllPlots, 50);
+            setTimeout(resizeAllPlots, 150);
+            setTimeout(resizeAllPlots, 400);
+            setTimeout(resizeAllPlots, 800);
+        }
+
+        // Call on DOMContentLoaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeCharts);
+        } else {
+            initializeCharts();
+        }
+
+        // Call on window load
+        window.addEventListener('load', function() {
+            setTimeout(initializeCharts, 100);
+            setTimeout(resizeAllPlots, 1000);
+        });
 
         // Resize plots when window is resized with debouncing
         let resizeTimeout;
@@ -17768,41 +19925,19 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
             resizeTimeout = setTimeout(resizeAllPlots, 250);
         });
 
-        // Resize plots when tabs are clicked to ensure they're visible
+        // Resize plots when tabs are shown
         document.addEventListener('shown.bs.tab', function(event) {
             setTimeout(resizeAllPlots, 50);
-            setTimeout(resizeAllPlots, 200);
-            setTimeout(resizeAllPlots, 500);
+            setTimeout(resizeAllPlots, 150);
+            setTimeout(resizeAllPlots, 400);
         });
 
         // Resize plots when tabs are about to be shown
         document.addEventListener('show.bs.tab', function(event) {
-            setTimeout(resizeAllPlots, 50);
+            setTimeout(resizeAllPlots, 10);
         });
 
-        // Aggressive resize on page load and after DOM is ready
-        function initializeResizeHandlers() {
-            resizeAllPlots();
-            setTimeout(resizeAllPlots, 100);
-            setTimeout(resizeAllPlots, 300);
-            setTimeout(resizeAllPlots, 600);
-        }
-
-        // Call on DOMContentLoaded
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializeResizeHandlers);
-        } else {
-            initializeResizeHandlers();
-        }
-
-        // Also trigger resize when window is fully loaded
-        window.addEventListener('load', function() {
-            setTimeout(resizeAllPlots, 100);
-            setTimeout(resizeAllPlots, 500);
-            setTimeout(resizeAllPlots, 1000);
-        });
-
-        // Trigger resize when page becomes visible (tab focus)
+        // Trigger resize when page becomes visible (tab focus in browser)
         document.addEventListener('visibilitychange', function() {
             if (!document.hidden) {
                 setTimeout(resizeAllPlots, 100);
@@ -17811,28 +19946,19 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
 
         // Use ResizeObserver to watch container changes
         if (window.ResizeObserver) {
-            const containers = document.querySelectorAll('.analysis-plot-container, .plot-container, .js-plotly-plot');
-            const observer = new ResizeObserver(function() {
-                resizeAllPlots();
-            });
-            
-            containers.forEach(container => {
-                observer.observe(container);
-            });
-        }
-
-        // Additional observer for tab-panes that might be added dynamically
-        const tabObserver = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.addedNodes.length > 0) {
-                    setTimeout(resizeAllPlots, 100);
-                }
-            });
-        });
-
-        const tabContent = document.querySelector('.tab-content');
-        if (tabContent) {
-            tabObserver.observe(tabContent, { childList: true, subtree: true });
+            try {
+                const observer = new ResizeObserver(function() {
+                    setTimeout(resizeAllPlots, 50);
+                });
+                
+                // Observe main containers
+                const containers = document.querySelectorAll('.analysis-tab-container, .tab-pane, .card-body');
+                containers.forEach(container => {
+                    observer.observe(container);
+                });
+            } catch (e) {
+                // ResizeObserver not supported or error occurred
+            }
         }
     </script>
 </body>

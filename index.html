@@ -334,7 +334,7 @@
             flex-direction: column !important;
             height: auto !important;
             align-items: stretch !important;
-            padding: 0 !important;
+            padding: 1rem 1.5rem !important;
             margin: 0 !important;
             gap: 0 !important;
         }
@@ -849,7 +849,7 @@
 
         .analysis-controls {
             width: 100%;
-            padding: 0 0.75rem;
+            padding: 0 1.75rem;
             margin: 0;
             box-sizing: border-box;
             display: flex;
@@ -2264,8 +2264,20 @@
                                     </div>
                                 </div>
 
+                                <!-- Batch Mode Selector -->
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label"><i class="fas fa-sliders-h me-1"></i>Batch Mode</label>
+                                        <select class="form-select" id="batchModeSelect">
+                                            <option value="indices" selected>Calculate Indices (oxidation, crystallinity, TVI)</option>
+                                            <option value="synovial">Synovial Liquid Species (per depth)</option>
+                                        </select>
+                                        <div class="form-text">Choose whether to export indices or deconvoluted carbonyl species for each file.</div>
+                                    </div>
+                                </div>
+
                                 <!-- Batch Analysis Options -->
-                                <div class="row mb-4 p-3 bg-light rounded">
+                                <div class="row mb-4 p-3 bg-light rounded" id="batchIndexOptions">
                                     <div class="col-md-6">
                                         <label class="form-label"><i class="fas fa-fire me-1"></i>Oxidation Method</label>
                                         <select class="form-select" id="batchOxidationMethod">
@@ -2280,6 +2292,10 @@
                                             <option value="height">CI Height-Based</option>
                                         </select>
                                     </div>
+                                </div>
+
+                                <div class="alert alert-info small" id="batchSynovialNote" style="display: none;">
+                                    <i class="fas fa-vial me-2"></i>Synovial mode runs the single-file synovial liquid analysis for every batch file, exporting carbonyl species concentrations and R² per depth.
                                 </div>
 
                                 <!-- File List Preview with Editable Names -->
@@ -2319,6 +2335,28 @@
                                         </div>
                                         <div class="text-muted small mt-2">
                                             <span id="batchCurrentFile">Waiting to start...</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Batch Results Display Section (Synovial) -->
+                                <div class="row mt-4" id="batchResultsSection" style="display: none;">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5><i class="fas fa-chart-bar me-2"></i>Batch Analysis Results</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <!-- Tabs for each sample -->
+                                                <ul class="nav nav-tabs" id="batchResultsTabs" role="tablist">
+                                                    <!-- Dynamically populated -->
+                                                </ul>
+                                                
+                                                <!-- Tab content -->
+                                                <div class="tab-content mt-3" id="batchResultsContent">
+                                                    <!-- Dynamically populated -->
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -4644,7 +4682,9 @@
             loadedFiles: [],
             batchFiles: [],
             batchResults: {},
-            batchErrors: {}
+            batchErrors: {},
+            batchSynovialResults: [],
+            lastBatchMode: 'indices'
         };
 
         // Utility Functions
@@ -13710,6 +13750,30 @@
         }
 
         // ===== BATCH ANALYSIS FUNCTIONS =====
+        function handleBatchModeChange() {
+            const mode = document.getElementById('batchModeSelect')?.value || 'indices';
+            const indexOptions = document.getElementById('batchIndexOptions');
+            const synovialNote = document.getElementById('batchSynovialNote');
+            const downloadBtn = document.getElementById('downloadBatchExcelBtn');
+
+            if (indexOptions) {
+                indexOptions.style.display = mode === 'indices' ? 'block' : 'none';
+            }
+
+            if (synovialNote) {
+                synovialNote.style.display = mode === 'synovial' ? 'block' : 'none';
+            }
+
+            if (downloadBtn) {
+                downloadBtn.title = mode === 'synovial'
+                    ? 'Download synovial carbonyl species results'
+                    : 'Download batch indices results';
+                downloadBtn.innerHTML = mode === 'synovial'
+                    ? '<i class="fas fa-download me-2"></i>Download Synovial Excel'
+                    : '<i class="fas fa-download me-2"></i>Download Excel';
+            }
+        }
+
         function handleBatchFileSelection(event) {
             const files = Array.from(event.target.files);
             if (files.length === 0) {
@@ -13773,6 +13837,14 @@
         async function performBatchAnalysis() {
             if (window.AppState.batchFiles.length === 0) {
                 showNotification('No files selected for batch analysis', 'warning');
+                return;
+            }
+
+            const batchMode = document.getElementById('batchModeSelect')?.value || 'indices';
+            window.AppState.lastBatchMode = batchMode;
+
+            if (batchMode === 'synovial') {
+                await performBatchSynovialAnalysis();
                 return;
             }
 
@@ -13887,6 +13959,142 @@
                     showNotification('Batch analysis completed! Click the Download button to get your Excel file.', 'success');
                 } catch (error) {
                     console.error('Error displaying results:', error);
+                    showNotification('Analysis completed but there was an error displaying results: ' + error.message, 'error');
+                }
+            }, 500);
+        }
+
+        async function performBatchSynovialAnalysis() {
+            const totalFiles = window.AppState.batchFiles.length;
+            const progressSection = document.getElementById('batchProgressSection');
+            const downloadSection = document.getElementById('batchDownloadSection');
+
+            const lactoneMin = parseFloat(document.getElementById('synovialLactoneMin')?.value) || 1782;
+            const lactoneMax = parseFloat(document.getElementById('synovialLactoneMax')?.value) || 1792;
+            const esterMin = parseFloat(document.getElementById('synovialEsterMin')?.value) || 1168;
+            const esterMax = parseFloat(document.getElementById('synovialEsterMax')?.value) || 1186;
+            const refMin = parseFloat(document.getElementById('synovialRefMin')?.value) || 1980;
+            const refMax = parseFloat(document.getElementById('synovialRefMax')?.value) || 2100;
+
+            const synovialParams = { lactoneMin, lactoneMax, esterMin, esterMax, refMin, refMax };
+
+            progressSection.style.display = 'block';
+            downloadSection.style.display = 'none';
+            window.AppState.batchSynovialResults = [];
+            window.AppState.batchErrors = {};
+            window.AppState.lastBatchMode = 'synovial';
+            window.isBatchMode = true; // Enable fast batch mode
+
+            showLoading('Starting synovial batch analysis...');
+
+            for (let i = 0; i < totalFiles; i++) {
+                const fileItem = window.AppState.batchFiles[i];
+                updateBatchProgress(i, totalFiles, fileItem.sampleName);
+                updateStatusBadge(i, 'analyzing', 'Analyzing...');
+
+                try {
+                    await loadBatchFile(fileItem.file);
+
+                    window.AppState.maskedDepths = new Set();
+
+                    const spectraData = window.AppState.spectraData || {};
+                    const maskedDepths = window.AppState.maskedDepths || new Set();
+
+                    const depths = Object.keys(spectraData)
+                        .filter(d => !maskedDepths.has(d))
+                        .sort((a, b) => {
+                            const numA = parseFloat(a.replace(/[^\d.]/g, ''));
+                            const numB = parseFloat(b.replace(/[^\d.]/g, ''));
+                            return numA - numB;
+                        });
+
+                    if (depths.length === 0) {
+                        throw new Error('No spectra data available after loading file');
+                    }
+
+                    const depthResults = [];
+
+                    for (const depth of depths) {
+                        try {
+                            const spectrum = spectraData[depth];
+                            if (!spectrum) {
+                                throw new Error(`No spectrum found for depth ${depth}`);
+                            }
+
+                            const depthResult = await analyzeDepthForSynovial(spectrum, depth, synovialParams);
+                            const species = depthResult.deconvolutionData?.species || {};
+                            const fitQuality = depthResult.deconvolutionData?.fitQuality || {};
+
+                            const estersFromBand = depthResult.esters?.concentration ?? null;
+                            const aldehydesFromCalc = depthResult.aldehydes?.concentration;
+                            const estersAldehydesDeconv = species.esters_aldehydes?.concentration ?? null;
+                            const derivedAldehydes = aldehydesFromCalc !== undefined
+                                ? aldehydesFromCalc
+                                : (estersAldehydesDeconv !== null && estersFromBand !== null
+                                    ? Math.max(0, estersAldehydesDeconv - estersFromBand)
+                                    : null);
+
+                            depthResults.push({
+                                depth: depthResult.depth || depth,
+                                numericDepth: depthResult.numericDepth || parseFloat(depth.replace(/[^\d.]/g, '')),
+                                gammaKetoKeto: species.gamma_ketoacids_keto?.concentration ?? null,
+                                gammaKetoAcid: species.gamma_ketoacids_acid?.concentration ?? null,
+                                aldehydes: derivedAldehydes,
+                                ketones: species.ketones?.concentration ?? null,
+                                esters: estersFromBand,
+                                carboxylicAssoc: species.carboxylic_acids?.concentration ?? null,
+                                carboxylicIsolated: species.carboxylic_acids_isolated?.concentration ?? null,
+                                referenceBandArea: depthResult.referenceBandArea ?? depthResult.deconvolutionData?.referenceBandArea ?? null,
+                                r2: fitQuality.r2 ?? null,
+                                r2Abs: fitQuality.r2Abs ?? null
+                            });
+                        } catch (depthError) {
+                            depthResults.push({
+                                depth: depth,
+                                error: depthError.message
+                            });
+                        }
+                    }
+
+                    window.AppState.batchSynovialResults.push({
+                        fileName: fileItem.fileName,
+                        sampleName: fileItem.sampleName,
+                        analysisDate: new Date().toLocaleString(),
+                        parameters: synovialParams,
+                        depths: depthResults,
+                        status: 'success'
+                    });
+
+                    updateStatusBadge(i, 'success', 'Success');
+                } catch (error) {
+                    console.error(`Error analyzing ${fileItem.fileName} (synovial):`, error);
+                    window.AppState.batchErrors[fileItem.sampleName] = error.message;
+                    window.AppState.batchSynovialResults.push({
+                        fileName: fileItem.fileName,
+                        sampleName: fileItem.sampleName,
+                        error: error.message,
+                        status: 'failed',
+                        parameters: synovialParams,
+                        depths: []
+                    });
+                    updateStatusBadge(i, 'error', `Error: ${error.message.substring(0, 30)}`);
+                }
+            }
+
+            hideLoading();
+            updateBatchProgress(totalFiles, totalFiles, 'Analysis complete!');
+
+            window.isBatchMode = false; // Disable batch mode after completion
+
+            setTimeout(() => {
+                try {
+                    progressSection.style.display = 'none';
+                    document.getElementById('batchResultsSection').style.display = 'block';
+                    downloadSection.style.display = 'block';
+                    displayBatchSynovialResults();
+                    showNotification('Synovial batch analysis completed! Click Download to get the Excel file.', 'success');
+                } catch (error) {
+                    console.error('Error displaying synovial batch results:', error);
                     showNotification('Analysis completed but there was an error displaying results: ' + error.message, 'error');
                 }
             }, 500);
@@ -14106,6 +14314,331 @@
             const timestamp = new Date().toISOString().slice(0, 10);
             XLSX.writeFile(wb, `FTIR_Batch_Analysis_${timestamp}.xlsx`);
         }
+
+        async function generateBatchSynovialExcel() {
+            if (typeof XLSX === 'undefined') {
+                throw new Error('Excel library not loaded. Please refresh the page and try again.');
+            }
+
+            const results = window.AppState.batchSynovialResults || [];
+            if (!results || results.length === 0) {
+                showNotification('No synovial batch results available. Run the synovial batch analysis first.', 'warning');
+                return;
+            }
+
+            showLoading('Generating Excel with charts...');
+
+            try {
+                const wb = XLSX.utils.book_new();
+
+                // Sheet 1: Global Results (all samples)
+                const sheetData = [];
+                sheetData.push(['Synovial Liquid Batch Results', '', '', '', '', '', '', '', '', '', '', '', '']);
+                sheetData.push(['Analysis Date', new Date().toLocaleString()]);
+                sheetData.push(['Generated by', 'FTIR UHMWPE Analyzer - Developed by the Biomaterials Group of University of Zaragoza / I3A']);
+                sheetData.push(['']);
+
+                sheetData.push([
+                    'Sample',
+                    'Depth',
+                    'Gamma ketoacid (keto group)',
+                    'Gamma ketoacid (acid group)',
+                    'Aldehydes',
+                    'Ketones',
+                    'Esters',
+                    'Carboxylic acid assoc.',
+                    'Carboxylic acid isolated',
+                    'Reference band area',
+                    'R²',
+                    'R² Abs',
+                    'Status'
+                ]);
+
+                results.forEach(result => {
+                    const sampleLabel = result.sampleName || result.fileName || 'Sample';
+
+                    if (result.error) {
+                        sheetData.push([sampleLabel, '', '', '', '', '', '', '', '', '', '', '', `ERROR: ${result.error}`]);
+                        return;
+                    }
+
+                    if (!result.depths || result.depths.length === 0) {
+                        sheetData.push([sampleLabel, '', '', '', '', '', '', '', '', '', '', '', 'No depth data']);
+                        return;
+                    }
+
+                    result.depths.forEach(depthResult => {
+                        if (depthResult.error) {
+                            sheetData.push([
+                                sampleLabel,
+                                depthResult.depth || '',
+                                '', '', '', '', '', '', '', '', '', '',
+                                `ERROR: ${depthResult.error}`
+                            ]);
+                            return;
+                        }
+
+                        sheetData.push([
+                            sampleLabel,
+                            depthResult.depth || '',
+                            formatDecimalWithComma(depthResult.gammaKetoKeto),
+                            formatDecimalWithComma(depthResult.gammaKetoAcid),
+                            formatDecimalWithComma(depthResult.aldehydes),
+                            formatDecimalWithComma(depthResult.ketones),
+                            formatDecimalWithComma(depthResult.esters),
+                            formatDecimalWithComma(depthResult.carboxylicAssoc),
+                            formatDecimalWithComma(depthResult.carboxylicIsolated),
+                            formatDecimalWithComma(depthResult.referenceBandArea, 6),
+                            formatDecimalWithComma(depthResult.r2, 4),
+                            formatDecimalWithComma(depthResult.r2Abs, 4),
+                            'Success'
+                        ]);
+                    });
+                });
+
+                const ws1 = XLSX.utils.aoa_to_sheet(sheetData);
+                XLSX.utils.book_append_sheet(wb, ws1, 'Global Results');
+
+                // Sheet 2+: Per-sample sheets with charts
+                for (let idx = 0; idx < results.length; idx++) {
+                    const result = results[idx];
+                    if (result.error) continue;
+
+                    const sampleName = result.sampleName || result.fileName || `Sample_${idx + 1}`;
+                    const sheetName = sampleName.substring(0, 31); // Excel sheet name max 31 chars
+
+                    // Create sheet for this sample
+                    const sampleData = [];
+                    sampleData.push([`Sample: ${sampleName}`]);
+                    sampleData.push(['Generated by: FTIR UHMWPE Analyzer - Biomaterials Group, University of Zaragoza / I3A']);
+                    sampleData.push(['']);
+                    sampleData.push(['NOTE: Interactive chart available in web application']);
+                    sampleData.push(['']);
+                    sampleData.push([
+                        'Depth',
+                        'Gamma-keto (keto)',
+                        'Gamma-keto (acid)',
+                        'Aldehydes',
+                        'Ketones',
+                        'Esters',
+                        'Carbox. (assoc.)',
+                        'Carbox. (isolated)',
+                        'R²',
+                        'R² Abs'
+                    ]);
+
+                    if (result.depths) {
+                        result.depths.forEach(depth => {
+                            if (!depth.error) {
+                                sampleData.push([
+                                    depth.depth || '',
+                                    formatDecimalWithComma(depth.gammaKetoKeto),
+                                    formatDecimalWithComma(depth.gammaKetoAcid),
+                                    formatDecimalWithComma(depth.aldehydes),
+                                    formatDecimalWithComma(depth.ketones),
+                                    formatDecimalWithComma(depth.esters),
+                                    formatDecimalWithComma(depth.carboxylicAssoc),
+                                    formatDecimalWithComma(depth.carboxylicIsolated),
+                                    formatDecimalWithComma(depth.r2, 4),
+                                    formatDecimalWithComma(depth.r2Abs, 4)
+                                ]);
+                            }
+                        });
+                    }
+
+                    const ws = XLSX.utils.aoa_to_sheet(sampleData);
+                    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+                }
+
+                // Sheet: Parameters
+                const params = (results.find(r => r.parameters)?.parameters) || {};
+                const paramSheet = [];
+                paramSheet.push(['Parameters']);
+                paramSheet.push(['']);
+                paramSheet.push(['Generated by', 'FTIR UHMWPE Analyzer']);
+                paramSheet.push(['Developed by', 'Biomaterials Group of University of Zaragoza / I3A']);
+                paramSheet.push(['']);
+                paramSheet.push(['Lactone band (cm^-1)', params.lactoneMin && params.lactoneMax ? `${params.lactoneMin}-${params.lactoneMax}` : 'N/A']);
+                paramSheet.push(['Ester band (cm^-1)', params.esterMin && params.esterMax ? `${params.esterMin}-${params.esterMax}` : 'N/A']);
+                paramSheet.push(['Reference band (cm^-1)', params.refMin && params.refMax ? `${params.refMin}-${params.refMax}` : 'N/A']);
+                paramSheet.push(['Reference band (deconvolution)', '1370 cm^-1']);
+                paramSheet.push(['Analysis Date', results[0]?.analysisDate || new Date().toLocaleString()]);
+
+                const wsParams = XLSX.utils.aoa_to_sheet(paramSheet);
+                XLSX.utils.book_append_sheet(wb, wsParams, 'Parameters');
+
+                const timestamp = new Date().toISOString().slice(0, 10);
+                XLSX.writeFile(wb, `FTIR_Batch_Synovial_${timestamp}.xlsx`);
+
+                hideLoading();
+                showNotification('Excel file generated successfully!', 'success');
+            } catch (error) {
+                console.error('Error generating Excel:', error);
+                hideLoading();
+                showNotification('Error generating Excel: ' + error.message, 'error');
+            }
+        }
+
+        function displayBatchSynovialResults() {
+            const results = window.AppState.batchSynovialResults || [];
+            if (!results || results.length === 0) return;
+
+            const tabsContainer = document.getElementById('batchResultsTabs');
+            const contentContainer = document.getElementById('batchResultsContent');
+            
+            tabsContainer.innerHTML = '';
+            contentContainer.innerHTML = '';
+
+            results.forEach((result, idx) => {
+                if (result.error) return;
+
+                const sampleName = result.sampleName || result.fileName || `Sample ${idx + 1}`;
+                const tabId = `batchTab_${idx}`;
+                const contentId = `batchContent_${idx}`;
+
+                // Create tab button
+                const tabButton = document.createElement('li');
+                tabButton.className = 'nav-item';
+                tabButton.innerHTML = `
+                    <button class="nav-link ${idx === 0 ? 'active' : ''}" id="${tabId}-tab" data-bs-toggle="tab" 
+                            data-bs-target="#${contentId}" type="button" role="tab">
+                        ${sampleName}
+                    </button>
+                `;
+                tabsContainer.appendChild(tabButton);
+
+                // Create tab content
+                const contentDiv = document.createElement('div');
+                contentDiv.className = `tab-pane fade ${idx === 0 ? 'show active' : ''}`;
+                contentDiv.id = contentId;
+                contentDiv.innerHTML = `
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h6>Results for ${sampleName}</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Depth</th>
+                                            <th>Gamma-keto (keto)</th>
+                                            <th>Gamma-keto (acid)</th>
+                                            <th>Aldehydes</th>
+                                            <th>Ketones</th>
+                                            <th>Esters</th>
+                                            <th>Carbox. (assoc.)</th>
+                                            <th>Carbox. (isolated)</th>
+                                            <th>R²</th>
+                                            <th>R² Abs</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="table_${contentId}">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div id="plot_${contentId}" style="width: 100%; height: 400px;"></div>
+                        </div>
+                    </div>
+                `;
+                contentContainer.appendChild(contentDiv);
+
+                // Populate table and create plot
+                populateSampleTable(result, `table_${contentId}`);
+                createSamplePlot(result, `plot_${contentId}`, sampleName);
+            });
+        }
+
+        function populateSampleTable(result, tableBodyId) {
+            const tbody = document.getElementById(tableBodyId);
+            if (!tbody || !result.depths) return;
+
+            tbody.innerHTML = '';
+            result.depths.forEach(depth => {
+                if (depth.error) {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${depth.depth}</td>
+                            <td colspan="9" class="text-danger">Error: ${depth.error}</td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${depth.depth}</td>
+                        <td>${formatDecimalWithComma(depth.gammaKetoKeto)}</td>
+                        <td>${formatDecimalWithComma(depth.gammaKetoAcid)}</td>
+                        <td>${formatDecimalWithComma(depth.aldehydes)}</td>
+                        <td>${formatDecimalWithComma(depth.ketones)}</td>
+                        <td>${formatDecimalWithComma(depth.esters)}</td>
+                        <td>${formatDecimalWithComma(depth.carboxylicAssoc)}</td>
+                        <td>${formatDecimalWithComma(depth.carboxylicIsolated)}</td>
+                        <td>${formatDecimalWithComma(depth.r2, 4)}</td>
+                        <td>${formatDecimalWithComma(depth.r2Abs, 4)}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function createSamplePlot(result, plotId, sampleName) {
+            const plotDiv = document.getElementById(plotId);
+            if (!plotDiv || !result.depths) return;
+
+            const depths = result.depths
+                .filter(d => !d.error)
+                .sort((a, b) => {
+                    const numA = a.numericDepth || parseFloat(a.depth?.replace(/[^\d.]/g, ''));
+                    const numB = b.numericDepth || parseFloat(b.depth?.replace(/[^\d.]/g, ''));
+                    return numA - numB;
+                });
+
+            if (depths.length === 0) {
+                plotDiv.innerHTML = '<p class="text-muted text-center mt-3">No valid data to plot</p>';
+                return;
+            }
+
+            const depthValues = depths.map(d => d.numericDepth || parseFloat(d.depth?.replace(/[^\d.]/g, '')));
+
+            const species = [
+                { key: 'gammaKetoKeto', name: 'Gamma-keto (keto)', color: '#3498db' },
+                { key: 'gammaKetoAcid', name: 'Gamma-keto (acid)', color: '#2ecc71' },
+                { key: 'aldehydes', name: 'Aldehydes', color: '#e74c3c' },
+                { key: 'ketones', name: 'Ketones', color: '#f39c12' },
+                { key: 'esters', name: 'Esters', color: '#9b59b6' },
+                { key: 'carboxylicAssoc', name: 'Carbox. (assoc.)', color: '#1abc9c' },
+                { key: 'carboxylicIsolated', name: 'Carbox. (isolated)', color: '#e67e22' }
+            ];
+
+            const traces = species.map(spec => ({
+                x: depthValues,
+                y: depths.map(d => d[spec.key] || 0),
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: spec.name,
+                line: { color: spec.color, width: 2 },
+                marker: { size: 6, color: spec.color }
+            }));
+
+            const layout = {
+                title: `Carbonyl Species Concentration vs Depth - ${sampleName}`,
+                xaxis: { title: 'Depth (μm)', showgrid: true },
+                yaxis: { title: 'Concentration (mmol/cm³)', showgrid: true },
+                hovermode: 'closest',
+                margin: { l: 60, r: 20, t: 50, b: 40 },
+                height: 400
+            };
+
+            Plotly.newPlot(plotDiv, traces, layout, { responsive: true });
+
+            // Store traces for Excel export
+            result.plotTraces = traces;
+            result.plotLayout = layout;
+        }
+
 
         function calculateBatchSpectrumStats(results) {
             const stats = {};
@@ -14482,6 +15015,11 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
             document.getElementById('fullAutoAnalysisBtn').addEventListener('click', performFullAutoAnalysis);
 
             // Event listeners for batch analysis
+            const batchModeSelect = document.getElementById('batchModeSelect');
+            if (batchModeSelect) {
+                batchModeSelect.addEventListener('change', handleBatchModeChange);
+                handleBatchModeChange();
+            }
             document.getElementById('batchFileInput').addEventListener('change', handleBatchFileSelection);
             document.getElementById('startBatchAnalysisBtn').addEventListener('click', performBatchAnalysis);
             
@@ -14489,7 +15027,12 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
             if (downloadBtn) {
                 downloadBtn.addEventListener('click', () => {
                     try {
-                        generateBatchResultsExcel();
+                        const mode = window.AppState.lastBatchMode || batchModeSelect?.value || 'indices';
+                        if (mode === 'synovial') {
+                            generateBatchSynovialExcel();
+                        } else {
+                            generateBatchResultsExcel();
+                        }
                     } catch (error) {
                         showNotification('Error generating Excel: ' + error.message, 'error');
                     }
@@ -15284,7 +15827,8 @@ ${avgTviNum !== null ? `\n☢️ **Estimated Irradiation Dose: ${irradiationDose
             fitQuality: { r2: -Infinity, r2Abs: -Infinity, areaError: Infinity }
         };
 
-        const maxIter = 5000; // Máximo de iteraciones para optimización exhaustiva
+        // Use global flag for batch mode (faster) or normal mode (precise)
+        const maxIter = window.isBatchMode ? 1000 : 5000;
         const areaOrig = calculateAreaSimpsonRule(spectrum.frequency, spectrum.transmittance);
         const delta = 0.005; // Reducido de 0.01 a 0.005 para gradientes más precisos
         
